@@ -17,6 +17,9 @@ module.exports = {
         accent: "var(--accent)",
 
       },
+      padding:{
+        navBarPadding:"var(--navBarPadding)"
+      }
     },
   },
   plugins: [],

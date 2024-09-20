@@ -10,10 +10,12 @@
   --surface: #fff3fa;
   --secondary: #a28291;
   --accent: #957c3d;
+  --navBarPadding: 70px;
 }
 
 body {
   @apply bg-surface text-onSurface;
+  @apply box-border;
 }
 
 /* @media (prefers-color-scheme: dark) {
