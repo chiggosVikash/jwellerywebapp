@@ -9,7 +9,13 @@ module.exports = {
     extend: {
       colors: {
         background: "var(--background)",
-        foreground: "var(--foreground)",
+        onSurface: "var(--onSurface)",
+        primary: "var(--primary)",
+        secondary: "var(--secondary)",
+        surface: "var(--surface)",
+        onPrimary: "var(--onPrimary)",
+        accent: "var(--accent)",
+
       },
     },
   },

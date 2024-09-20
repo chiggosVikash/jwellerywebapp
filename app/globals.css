@@ -4,10 +4,19 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --onSurface: #242323;
+  --primary: #521c3c;
+  --onPrimary:#ebdddc;
+  --surface: #fff3fa;
+  --secondary: #a28291;
+  --accent: #957c3d;
 }
 
-@media (prefers-color-scheme: dark) {
+body {
+  @apply bg-surface text-onSurface;
+}
+
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
@@ -24,4 +33,4 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-}
+} */
