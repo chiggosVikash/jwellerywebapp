@@ -1,4 +1,4 @@
-import { Raleway, Inter,} from "next/font/google";
+import { Raleway, Inter,Montserrat} from "next/font/google";
 import "./globals.css";
 import SidebarMenu from "./Components/SidebarMenu";
 import Navbar from "./Components/Navbar";
@@ -10,16 +10,17 @@ export const metadata = {
 
 const raleway = Raleway({ subsets: ["latin"] });
 const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({ subsets: ["latin"] });
 // const poppins = Poppins({ subsets: ["latin"] });
 
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={raleway.className}>
-        <div className="flex justify-end">
+      <body className={montserrat.className}>
+        <div className="flex">
          <SidebarMenu />
-         <div className="2xl:w-[83%] xl:w-[80%] w-[75%] flex flex-col">
+         <div className="ml-[18%] w-[82vw] flex flex-col">
          <Navbar/>
          {children}
          </div>

@@ -1,7 +1,8 @@
 import React from 'react'
 import Header from '../Components/Header'
 import { FaIndianRupeeSign } from "react-icons/fa6";
-// import { s } from 'vite/dist/node/types.d-aGj9QkWt';
+import SearchField from '../Components/SearchField';
+import FilterMenu from '../Components/FilterMenu';
 
 
 
@@ -33,18 +34,21 @@ const ProductsListPage = () => {
     }
   ]
   return (
-    <div className='w-full h-max py-navBarPadding'>
+    <div className='overflow-x-hidden  h-max py-navBarPadding'>
       <Header header={"Products List"}/>
-      <div className='h-screen my-10 mx-28 '>
+      <div className='flex mx-8'>
+        <FilterMenu/>
+      <div className='w-full h-screen my-10 ml-10 '>
+        <SearchField/>
         {
           products.map((product,index)=>{
             return (
               <div key={index} className='flex bg-background my-8 p-4 rounded-lg shadow-sm border-gray-200 py-4'>
                 <img src='https://via.placeholder.com/150' alt='product' className='w-32 h-32'/>
-                <div className='ml-4'>
+                <div className='w-full  ml-4'>
                   <p className='text-gray-500 text-xs font-[Inter]'>SKU ID: {product.id}</p>
                   <div className='mt-1 w-full flex justify-between items-center' >
-                    <h1 className='w-[40rem] text-xl font-semibold'>{product.name}
+                    <h1 className='w-[50%] text-xl font-semibold'>{product.name}
                     </h1>
                     <p className='text-gray-500'>Category: {product.category} | Sub-category: {product.subCategory}</p>
                   </div>
@@ -56,7 +60,7 @@ const ProductsListPage = () => {
                   </div>
                   <div>
                     <button className='bg-primary text-onPrimary px-8 py-2 rounded-lg mt-4 mr-4 font-semibold'>View</button>
-                    <button className='bg-onPrimary text-primary font-semibold px-8 py-2 rounded-lg mt-4 mr-4'>Edit</button>
+                    <button className='bg-secondary text-onPrimary font-semibold px-8 py-2 rounded-lg mt-4 mr-4'>Edit</button>
                     <button className='bg-red-100 text-red-900 font-semibold px-8 py-2 rounded-lg mt-4 '>Delete</button>
                   </div>
                 </div>
@@ -64,6 +68,8 @@ const ProductsListPage = () => {
             )
           })
         }
+      </div>
+  
       </div>
     </div>
   )
