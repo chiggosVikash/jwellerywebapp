@@ -1,128 +1,135 @@
 'use client'
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import {usePictures} from '@/context/Pictures';
+import {uploadImages} from '../services/firebase_storage_service.js'
+import ErrorDialogue from './ErrorDialogue.jsx';
+import SuccessDialogue from './SuccessDialogue.jsx';
+import LoadingDialogue from './LoadingDialogue.jsx';
+import productSchema from '@/schemas/ProductSchema.js'
+import { useSaveProduct } from '@/context/SaveProduct';
 
 const AddProduct = () => {
-  const [product, setProduct] = useState({
-    productName: '',
-    category: '',
-    subCategory: '',
-    sku: '',
-    description: '',
-    goldKarat: '',
-    goldWeight: '',
-    diamondCarat: '',
-    diamondQuality: '',
-    numberOfDiamonds: '',
-    metalType: '',
-    jhumkaHeight: '',
-    jhumkaWidth: '',
-    costPrice: '',
-    sellingPrice: '',
-    makingCharges: '',
-    discount: '',
-    quantityAvailable: '',
-    taxDetails: '',
+
+  const defaultProductValues = {
+    productId: uuidv4(),
+    productImges: [],
+    quantityAvailable: "1",
     availabilityStatus: 'In Stock',
-    certificationDetails: '',
-    warranty: '',
-    returnPolicy: '',
-    supplierName: '',
-    manufacturerDetails: '',
-    countryOfOrigin: '',
-    seoTitle: '',
-    metaDescription: '',
-    keywords: '',
-    tags: '',
-    shippingWeight: '',
-    shippingClass: '',
-    leadTime: '',
-    shippingCharges: '',
-    specialInstructions: '',
-    notes: '',
+    makingCharges: "0",
+    
+  }
+
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+    resolver: zodResolver(productSchema),
+    defaultValues:defaultProductValues
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
+  const usePictureState = usePictures();
+  const { saveProduct, saveStatus, resetSaveStatus,setErrorState,setSavingStatus } = useSaveProduct();
+
+  const resetForm = ()=>{
+    // reload the page
+    window.location.reload()
+  } 
+
+  const savePictures = async ()=>{
+    if(usePictureState.pictures.length === 0){
+      throw new Error("Please upload at least one image")
+    }
+    const images = usePictureState.pictures.map((image)=>{
+      return {productId:setValue('productId'),file:image}
+    })
+    const urls = await uploadImages(images);
+    return urls;
+  }
+
+  const onSubmit = async (data) => {
+      try {
+        setSavingStatus("Saving product...")
+        const urls = await savePictures();
+        data.productImages = urls;
+
+        data.productId = uuidv4()
+        await saveProduct(data);
+
+        // resetForm()
+      } catch (error) {
+        setErrorState(error.message || "An error occurred while saving the product");
+      }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log('Product Details:', product);
-  };
+
+ 
+
+
+  
 
   return (
     <div className=" mx-auto p-6 bg-white/70 shadow-md rounded-lg">
       <h2 className="text-2xl mb-6">Add New Product</h2>
-      <form onSubmit={handleSubmit}>
 
+     <LoadingDialogue isLoading={saveStatus.isLoading} message={saveStatus.loadingMessage} />
+     <ErrorDialogue isError={saveStatus.isError} errorMessage={saveStatus.errorMessage} onReload={resetSaveStatus} />
+     <SuccessDialogue open={saveStatus.isSuccess} message={saveStatus.successMessage} onClose= {()=>{resetSaveStatus();resetForm()}} />
+    
+
+     {/* {saveStatus.isSuccess && <p>Success {saveStatus.successMessage}</p>}
+     {saveStatus.isError && <p>Error {saveStatus.errorMessage}</p>} */}
+
+      <form onSubmit={handleSubmit(onSubmit)}>
         {/* Product Details */}
         <div className="grid grid-cols-2 gap-8 mb-6">
           <div>
             <label className="block text-sm font-medium mb-1">Product Name</label>
             <input
-              type="text"
-              name="productName"
-              value={product.productName}
-              onChange={handleChange}
+              {...register('productName')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Product Name"
-              required
             />
+            {errors.productName && <p className="text-red-500 text-sm mt-1">{errors.productName.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Category</label>
             <input
-              type="text"
-              name="category"
-              value={product.category}
-              onChange={handleChange}
+              {...register('category')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Category"
-              required
             />
+            {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Sub-Category</label>
             <input
-              type="text"
-              name="subCategory"
-              value={product.subCategory}
-              onChange={handleChange}
+              {...register('subCategory')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Sub-Category"
-              required
             />
+            {errors.subCategory && <p className="text-red-500 text-sm mt-1">{errors.subCategory.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">SKU</label>
             <input
-              type="text"
-              name="sku"
-              value={product.sku}
-              onChange={handleChange}
+              {...register('sku')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="SKU"
-              required
             />
+            {errors.sku && <p className="text-red-500 text-sm mt-1">{errors.sku.message}</p>}
           </div>
         </div>
 
         <div className="mb-6">
           <label className="block text-sm font-medium mb-1">Description</label>
           <textarea
-            name="description"
-            value={product.description}
-            onChange={handleChange}
+            {...register('description')}
             className="w-full px-4 py-2 border rounded-md"
             placeholder="Description"
             rows="4"
-            required
           />
+          {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
         </div>
 
         {/* Material Specifications */}
@@ -131,68 +138,56 @@ const AddProduct = () => {
           <div>
             <label className="block text-sm font-medium mb-1">Gold Karat</label>
             <input
-              type="text"
-              name="goldKarat"
-              value={product.goldKarat}
-              onChange={handleChange}
+              {...register('goldKarat')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Gold Karat (e.g., 22K)"
             />
+            {errors.goldKarat && <p className="text-red-500 text-sm mt-1">{errors.goldKarat.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Gold Weight (g)</label>
             <input
-              type="text"
-              name="goldWeight"
-              value={product.goldWeight}
-              onChange={handleChange}
+              {...register('goldWeight')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Gold Weight (grams)"
             />
+            {errors.goldWeight && <p className="text-red-500 text-sm mt-1">{errors.goldWeight.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Diamond Carat</label>
             <input
-              type="text"
-              name="diamondCarat"
-              value={product.diamondCarat}
-              onChange={handleChange}
+              {...register('diamondCarat')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Diamond Carat"
             />
+            {errors.diamondCarat && <p className="text-red-500 text-sm mt-1">{errors.diamondCarat.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Diamond Quality</label>
             <input
-              type="text"
-              name="diamondQuality"
-              value={product.diamondQuality}
-              onChange={handleChange}
+              {...register('diamondQuality')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Diamond Quality (e.g., VVS)"
             />
+            {errors.diamondQuality && <p className="text-red-500 text-sm mt-1">{errors.diamondQuality.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Number of Diamonds</label>
             <input
-              type="text"
-              name="numberOfDiamonds"
-              value={product.numberOfDiamonds}
-              onChange={handleChange}
+              {...register('numberOfDiamonds')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Number of Diamonds"
             />
+            {errors.numberOfDiamonds && <p className="text-red-500 text-sm mt-1">{errors.numberOfDiamonds.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Metal Type</label>
             <input
-              type="text"
-              name="metalType"
-              value={product.metalType}
-              onChange={handleChange}
+              {...register('metalType')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Metal Type (e.g., Platinum)"
             />
+            {errors.metalType && <p className="text-red-500 text-sm mt-1">{errors.metalType.message}</p>}
           </div>
         </div>
 
@@ -202,24 +197,20 @@ const AddProduct = () => {
           <div>
             <label className="block text-sm font-medium mb-1">Jhumka Height (cm)</label>
             <input
-              type="text"
-              name="jhumkaHeight"
-              value={product.jhumkaHeight}
-              onChange={handleChange}
+              {...register('jhumkaHeight')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Height (cm)"
             />
+            {errors.jhumkaHeight && <p className="text-red-500 text-sm mt-1">{errors.jhumkaHeight.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Jhumka Width (cm)</label>
             <input
-              type="text"
-              name="jhumkaWidth"
-              value={product.jhumkaWidth}
-              onChange={handleChange}
+              {...register('jhumkaWidth')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Width (cm)"
             />
+            {errors.jhumkaWidth && <p className="text-red-500 text-sm mt-1">{errors.jhumkaWidth.message}</p>}
           </div>
         </div>
 
@@ -229,80 +220,67 @@ const AddProduct = () => {
           <div>
             <label className="block text-sm font-medium mb-1">Cost Price</label>
             <input
-              type="text"
-              name="costPrice"
-              value={product.costPrice}
-              onChange={handleChange}
+              {...register('costPrice')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Cost Price"
             />
+            {errors.costPrice && <p className="text-red-500 text-sm mt-1">{errors.costPrice.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Selling Price</label>
             <input
-              type="text"
-              name="sellingPrice"
-              value={product.sellingPrice}
-              onChange={handleChange}
+              {...register('sellingPrice')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Selling Price"
             />
+            {errors.sellingPrice && <p className="text-red-500 text-sm mt-1">{errors.sellingPrice.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Making Charges</label>
             <input
-              type="text"
-              name="makingCharges"
-              value={product.makingCharges}
-              onChange={handleChange}
+              {...register('makingCharges')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Making Charges"
             />
+            {errors.makingCharges && <p className="text-red-500 text-sm mt-1">{errors.makingCharges.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Discount (%)</label>
             <input
-              type="text"
-              name="discount"
-              value={product.discount}
-              onChange={handleChange}
+              {...register('discount')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Discount (%)"
             />
+            {errors.discount && <p className="text-red-500 text-sm mt-1">{errors.discount.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Quantity Available</label>
             <input
-              type="text"
-              name="quantityAvailable"
-              value={product.quantityAvailable}
-              onChange={handleChange}
+              {...register('quantityAvailable')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Quantity Available"
             />
+            {errors.quantityAvailable && <p className="text-red-500 text-sm mt-1">{errors.quantityAvailable.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Tax Details</label>
             <input
-              type="text"
-              name="taxDetails"
-              value={product.taxDetails}
-              onChange={handleChange}
+              {...register('taxDetails')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Tax Details (e.g., GST)"
             />
+            {errors.taxDetails && <p className="text-red-500 text-sm mt-1">{errors.taxDetails.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Availability Status</label>
             <select
-              name="availabilityStatus"
-              value={product.availabilityStatus}
-              onChange={handleChange}
+              {...register('availabilityStatus')}
               className="w-full px-4 py-2 border rounded-md"
             >
               <option value="In Stock">In Stock</option>
               <option value="Out of Stock">Out of Stock</option>
             </select>
+            {errors.availabilityStatus && <p className="text-red-500 text-sm mt-1">{errors.availabilityStatus.message}</p>}
           </div>
         </div>
 
@@ -312,204 +290,37 @@ const AddProduct = () => {
           <div>
             <label className="block text-sm font-medium mb-1">Certification Details</label>
             <input
-              type="text"
-              name="certificationDetails"
-              value={product.certificationDetails}
-              onChange={handleChange}
+              {...register('certificationDetails')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Certification Details"
             />
+            {errors.certificationDetails && <p className="text-red-500 text-sm mt-1">{errors.certificationDetails.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Warranty</label>
             <input
-              type="text"
-              name="warranty"
-              value={product.warranty}
-              onChange={handleChange}
+              {...register('warranty')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Warranty (e.g., 1 year)"
             />
+            {errors.warranty && <p className="text-red-500 text-sm mt-1">{errors.warranty.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Return Policy</label>
             <input
-              type="text"
-              name="returnPolicy"
-              value={product.returnPolicy}
-              onChange={handleChange}
+              {...register('returnPolicy')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Return Policy (e.g., 30 days)"
             />
+            {errors.returnPolicy && <p className="text-red-500 text-sm mt-1">{errors.returnPolicy.message}</p>}
           </div>
-        </div>
-
-        {/* Supplier & Manufacturer */}
-        <h3 className="text-lg font-semibold mb-4">Supplier & Manufacturer</h3>
-        <div className="grid grid-cols-2 gap-8 mb-6">
-          <div>
-            <label className="block text-sm font-medium mb-1">Supplier Name</label>
-            <input
-              type="text"
-              name="supplierName"
-              value={product.supplierName}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Supplier Name"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Manufacturer Details</label>
-            <input
-              type="text"
-              name="manufacturerDetails"
-              value={product.manufacturerDetails}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Manufacturer Details"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Country of Origin</label>
-            <input
-              type="text"
-              name="countryOfOrigin"
-              value={product.countryOfOrigin}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Country of Origin"
-            />
-          </div>
-        </div>
-
-        {/* SEO & Marketing */}
-        <h3 className="text-lg font-semibold mb-4">SEO & Marketing</h3>
-        <div className="grid grid-cols-2 gap-8 mb-6">
-          <div>
-            <label className="block text-sm font-medium mb-1">SEO Title</label>
-            <input
-              type="text"
-              name="seoTitle"
-              value={product.seoTitle}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="SEO Title"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Meta Description</label>
-            <input
-              type="text"
-              name="metaDescription"
-              value={product.metaDescription}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Meta Description"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Keywords</label>
-            <input
-              type="text"
-              name="keywords"
-              value={product.keywords}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Keywords"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Tags</label>
-            <input
-              type="text"
-              name="tags"
-              value={product.tags}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Tags"
-            />
-          </div>
-        </div>
-
-        {/* Logistics & Shipping */}
-        <h3 className="text-lg font-semibold mb-4">Logistics & Shipping</h3>
-        <div className="grid grid-cols-2 gap-8 mb-6">
-          <div>
-            <label className="block text-sm font-medium mb-1">Shipping Weight (g)</label>
-            <input
-              type="text"
-              name="shippingWeight"
-              value={product.shippingWeight}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Shipping Weight (grams)"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Shipping Class</label>
-            <input
-              type="text"
-              name="shippingClass"
-              value={product.shippingClass}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Shipping Class"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Lead Time (days)</label>
-            <input
-              type="text"
-              name="leadTime"
-              value={product.leadTime}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Lead Time (days)"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Shipping Charges</label>
-            <input
-              type="text"
-              name="shippingCharges"
-              value={product.shippingCharges}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Shipping Charges"
-            />
-          </div>
-        </div>
-
-        {/* Additional Information */}
-        <h3 className="text-lg font-semibold mb-4">Additional Information</h3>
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-1">Special Instructions</label>
-          <textarea
-            name="specialInstructions"
-            value={product.specialInstructions}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            placeholder="Special Instructions"
-            rows="3"
-          />
-        </div>
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-1">Notes</label>
-          <textarea
-            name="notes"
-            value={product.notes}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-            placeholder="Notes"
-            rows="3"
-          />
         </div>
 
         {/* Submit Button */}
         <div className="text-left">
           <button
             type="submit"
-            className="bg-primary text-onPrimary  hover:scale-105 px-12 py-3 rounded-md hover:bg-accent transition  duration-500"
+            className="bg-primary text-onPrimary hover:scale-105 px-12 py-3 rounded-md hover:bg-accent transition duration-500"
           >
             Save Product
           </button>
