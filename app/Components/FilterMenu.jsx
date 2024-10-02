@@ -1,10 +1,10 @@
 'use client'
 import React, { useState } from 'react';
 
-const FilterMenu = () => {
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedSubCategory, setSelectedSubCategory] = useState('');
-  const [sortOption, setSortOption] = useState('');
+const FilterMenu = ({selectedCategory,setSelectedCategory,selectedSubCategory,setSelectedSubCategory,sortOption,setSortOption}) => {
+  // const [selectedCategory, setSelectedCategory] = useState('');
+  // const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  // const [sortOption, setSortOption] = useState('');
 
   const categories = [
     {
