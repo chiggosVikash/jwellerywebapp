@@ -19,8 +19,9 @@ import {NextResponse} from "next/server"
  * If the product is not found, it returns a 404 status with an error message.
  * If there's an error during the process, it returns a 500 status with an error message.
  */
-export async function GET(req, { params }) {
+export async function GET(req,{ params }) {
     try {
+        console.log(req.url)
         const { id } = params
         const product = await getProductById(id)
         if (!product) {

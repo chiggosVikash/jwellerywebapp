@@ -1,15 +1,15 @@
 'use client'
 import axios from 'axios'
-import React,{useEffect,useState} from 'react'
+import React,{useEffect,useState,useCallback} from 'react'
 import Header from '../Components/Header'
 import { FaIndianRupeeSign } from "react-icons/fa6";
 import SearchField from '../Components/SearchField';
 import FilterMenu from '../Components/FilterMenu';
 import Spinner from '../Components/Spinner';
-
-
+import { useRouter } from 'next/navigation';
 
 const ProductsListPage = () => {
+  const router = useRouter()
   const [products, setProducts] = useState([])
   const [page, setPage] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -23,10 +23,8 @@ const ProductsListPage = () => {
 
 
 
-  const fetchProducts = async (isFilterChange = false) => {
- 
+  const fetchProducts = useCallback(async (isFilterChange = false) => {
     setIsSearching(false)
-    console.log("Fetching products with filter change:", isFilterChange)
     try {
       if(products.length === 0 || isFilterChange){
        
@@ -45,7 +43,7 @@ const ProductsListPage = () => {
       setIsLoading(false)
       setErrorMessage("Error fetching products")
     }
-  }
+  }, [products, selectedCategory, selectedSubCategory, sortOption, page, setProducts, setPage, setIsLoading, setErrorMessage]);
 
   const searchProducts = async (query) => {
     setIsSearching(true)
@@ -84,7 +82,7 @@ const ProductsListPage = () => {
         observer.disconnect();
       }
     };
-  }, [products, isLoading])
+  }, [products, isLoading,fetchProducts])
 
 
   const handleSubCategoryChange = (subCategory) => {
@@ -142,6 +140,7 @@ const ProductsListPage = () => {
            
             return (
               <div key={index} className='flex bg-background my-8 p-4 rounded-lg shadow-sm border-gray-200 py-4'>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={product.productImages[0]} alt='product' className='w-32 h-32'/>
                 <div className='w-full  ml-4'>
                   <p className='text-gray-500 text-xs font-[Inter]'>SKU ID: {product.sku}</p>
@@ -157,9 +156,11 @@ const ProductsListPage = () => {
                     <p className='text-primary text-xl font-semibold font-[Inter]'><FaIndianRupeeSign className='inline text-xs'/>{product.sellingPrice}</p>
                   </div>
                   <div>
-                    <button className='bg-primary text-onPrimary px-8 py-2 rounded-lg mt-4 mr-4 font-semibold'>View</button>
-                    <button className='bg-secondary text-onPrimary font-semibold px-8 py-2 rounded-lg mt-4 mr-4'>Edit</button>
-                    <button className='bg-red-100 text-red-900 font-semibold px-8 py-2 rounded-lg mt-4 '>Delete</button>
+                    <button onClick = {()=>{
+                      router.push(`/products-list/${product.productId}`)
+                    }}className='bg-primary text-onPrimary px-8 py-2 rounded-lg mt-4 mr-4 font-semibold'>View </button>
+                    <button onClick = {()=>{}}className='bg-secondary text-onPrimary font-semibold px-8 py-2 rounded-lg mt-4 mr-4'>Edit</button>
+                    <button onClick = {()=>{}}className='bg-red-100 text-red-900 font-semibold px-8 py-2 rounded-lg mt-4 '>Delete</button>
                   </div>
                 </div>
               </div>
