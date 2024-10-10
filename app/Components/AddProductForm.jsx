@@ -271,6 +271,7 @@ const AddProduct = () => {
             />
             {errors.taxDetails && <p className="text-red-500 text-sm mt-1">{errors.taxDetails.message}</p>}
           </div>
+          {/* Availability Status */}
           <div>
             <label className="block text-sm font-medium mb-1">Availability Status</label>
             <select
@@ -282,7 +283,49 @@ const AddProduct = () => {
             </select>
             {errors.availabilityStatus && <p className="text-red-500 text-sm mt-1">{errors.availabilityStatus.message}</p>}
           </div>
+
+           {/* Product Belongs to this collection */}
+        <div>
+            <label className="block text-sm font-medium mb-1">Collection</label>
+            <select
+              {...register('collection')}
+              className="w-full px-4 py-2 border rounded-md"
+            >
+              <option value="Engagement Rings">Engagement Rings</option>
+              <option value="Wedding Rings">Wedding Rings</option>
+              <option value="Necklaces">Necklaces</option>
+              <option value="Bracelets">Bracelets</option>
+              <option value="Earrings">Earrings</option>
+              <option value="Bangles">Bangles</option>
+              <option value="Pendants">Pendants</option>
+              <option value="Rings">Rings</option>
+              <option value="Other">Other</option>
+            </select>
+              {errors.collection && <p className="text-red-500 text-sm mt-1">{errors.collection.message}</p>}
+          </div>
+        
         </div>
+
+        {/* Product Belongs to this collection */}
+        {/* <div>
+            <label className="block text-sm font-medium mb-1">Collection</label>
+            <select
+              {...register('collection')}
+              className="w-full px-4 py-2 border rounded-md"
+            >
+              <option value="Engagement Rings">Engagement Rings</option>
+              <option value="Wedding Rings">Wedding Rings</option>
+              <option value="Necklaces">Necklaces</option>
+              <option value="Bracelets">Bracelets</option>
+              <option value="Earrings">Earrings</option>
+              <option value="Bangles">Bangles</option>
+              <option value="Pendants">Pendants</option>
+              <option value="Rings">Rings</option>
+              <option value="Other">Other</option>
+            </select>
+              {errors.collection && <p className="text-red-500 text-sm mt-1">{errors.collection.message}</p>}
+          </div> */}
+        
 
         {/* Certification & Warranty */}
         <h3 className="text-lg font-semibold mb-4">Certification & Warranty</h3>
