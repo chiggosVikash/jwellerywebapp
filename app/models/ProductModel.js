@@ -30,6 +30,12 @@ const ProductSchema = new mongoose.Schema({
   certificationDetails: String,
   warranty: String,
   returnPolicy: String,
+  collection: String,
+  gender: {
+    type: String,
+    enum: ['Male','Female','Child',"Unisex"],
+    required: [true,"Gender is required"]
+  },
   // supplierName: String,
   // manufacturerDetails: String,
   // countryOfOrigin: String,

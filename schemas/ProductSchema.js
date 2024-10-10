@@ -24,6 +24,9 @@ const productSchema = z.object({
   certificationDetails: z.string().optional(),
   warranty: z.string().optional(),
   returnPolicy: z.string().min(20, 'Return Policy is required and should be at least 20 characters long'),
+  collection: z.string().default("New Arrivals"),
+  gender: z.string().min(3, 'Gender is required'),
+
   // supplierName: z.string().optional(),
   // manufacturerDetails: z.string().optional(),
   // countryOfOrigin: z.string().optional(),
