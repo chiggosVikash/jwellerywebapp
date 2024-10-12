@@ -174,3 +174,53 @@ export async function searchProducts(query) {
     return [];
   }
 }
+
+export async function browseProducts(reqCount, limit, filters) {
+  try {
+    let query = [];
+
+    if (filters.length > 0) {
+      query.push({ category: filters });
+      query.push({ subCategory: filters });
+      query.push({ metalType: filters });
+      query.push({ gender: filters });
+      query.push({ collection: filters });
+      query.push({ availabilityStatus: filters });
+    }
+
+    await dbConnect();
+    const skip = reqCount * limit;
+    
+
+    const products = await ProductModel.find(query.length > 0 ? { $or: query } : {})
+      .skip(skip)
+      .limit(limit);
+    console.log("===================")
+    return products;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+}
+
+export async function countProductsBasedOnFilters(filters) {
+  try {
+    let query = [];
+    if (filters.length > 0) {
+      query.push({ category: filters });
+      query.push({ subCategory: filters });
+      query.push({ metalType: filters });
+      query.push({ gender: filters });
+      query.push({ collection: filters });
+      query.push({ availabilityStatus: filters });
+    }
+    await dbConnect();
+    const counts = await ProductModel.countDocuments(query.length > 0 ? { $or: query } : {})
+    return counts;
+  } catch (e) {
+    console.log(e);
+    return 0;
+  }
+}
+
+
