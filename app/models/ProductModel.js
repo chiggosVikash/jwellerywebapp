@@ -30,7 +30,7 @@ const ProductSchema = new mongoose.Schema({
   certificationDetails: String,
   warranty: String,
   returnPolicy: String,
-  collection: String,
+  productCollection: String,
   gender: {
     type: String,
     enum: ['Male','Female','Child',"Unisex"],
@@ -51,4 +51,5 @@ const ProductSchema = new mongoose.Schema({
   // notes: String,
 }, { timestamps: true });
 
-export default mongoose.models.Product || mongoose.model('Product', ProductSchema);
+const ProductModel = mongoose.models.Product || mongoose.model('Product', ProductSchema);
+export default ProductModel;

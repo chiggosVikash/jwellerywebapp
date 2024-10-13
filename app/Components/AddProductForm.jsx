@@ -21,7 +21,7 @@ const AddProduct = () => {
     availabilityStatus: 'In Stock',
     makingCharges: "0",
     gender: "Male",
-    collection: "New Arrivals",
+    productCollection: "New Arrivals",
 
   }
 
@@ -290,7 +290,7 @@ const AddProduct = () => {
           <div>
             <label className="block text-sm font-medium mb-1">Collection</label>
             <select
-              {...register('collection')}
+              {...register('productCollection')}
               className="w-full px-4 py-2 border rounded-md"
             >
               <option value="New Arrivals">New Arrivals</option>
@@ -304,7 +304,7 @@ const AddProduct = () => {
               <option value="Rings">Rings</option>
               <option value="Other">Other</option>
             </select>
-            {errors.collection && <p className="text-red-500 text-sm mt-1">{errors.collection.message}</p>}
+            {errors.productCollection && <p className="text-red-500 text-sm mt-1">{errors.productCollection.message}</p>}
           </div>
 
         </div>
@@ -322,7 +322,7 @@ const AddProduct = () => {
               <option value="Child">Child</option>
               <option value="Unisex">Unisex</option>
             </select>
-            {errors.collection && <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>}
+            {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>}
           </div>
 
         </div>

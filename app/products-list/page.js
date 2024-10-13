@@ -49,6 +49,7 @@ const ProductsListPage = () => {
     setIsSearching(true)
     try{
       const response = await axios.get(`/api/products?query=${query}`)
+      console.log(response.data);
       setProducts(response.data.data)
       setPage(0)
       setIsSearching(false)

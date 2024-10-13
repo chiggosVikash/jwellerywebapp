@@ -2,6 +2,7 @@ import { Raleway, Inter,Montserrat} from "next/font/google";
 import "./globals.css";
 import SidebarMenu from "./Components/SidebarMenu";
 import Navbar from "./Components/Navbar";
+import { SessionProvider } from "next-auth/react"
 
 export const metadata = {
   title: "Create Next App",
@@ -18,15 +19,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <div className="flex">
-         <SidebarMenu />
-         <div className="ml-[18%] w-[82vw] flex flex-col">
-         <Navbar/>
-         {children}
-         </div>
-        </div>
-        
-        </body>
+        <SessionProvider>
+          <div className="flex">
+           <SidebarMenu />
+           <div className="ml-[18%] w-[82vw] flex flex-col">
+           <Navbar/>
+           {children}
+           </div>
+          </div>
+        </SessionProvider>
+      </body>
     </html>
   );
 }

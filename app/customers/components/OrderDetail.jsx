@@ -90,7 +90,7 @@ export default function OrderDetails() {
               <p className="font-bold text-3xl text-rose-800 mb-3 hover:text-rose-600 transition-colors duration-300">₹45,786</p>
               <p className="text-gray-600 leading-relaxed hover:text-gray-800 transition-colors duration-300">
                 Embrace the ethereal beauty of the Himalayas with this exquisite piece. Handcrafted with love and precision, 
-                this stunning jewelry captures the essence of nature's grandeur, adding a touch of elegance to your style.
+                this stunning jewelry captures the essence of nature&apos;s grandeur, adding a touch of elegance to your style.
               </p>
             </div>
           </div>

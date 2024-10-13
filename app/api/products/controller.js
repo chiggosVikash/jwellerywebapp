@@ -66,24 +66,27 @@ export async function getProducts(reqCount, limit, category, subCategory, sortBy
 
     let sortOption = {};
     if (sortBy === 'Price-LTH') {
-      sortOption = { price: 1 };
+      sortOption = { sellingPrice: 1 };
     } else if (sortBy === 'Price-HTL') {
-      sortOption = { price: -1 };
+      sortOption = { sellingPrice: -1 };
     } else {
-      // Default sort by popularity (assuming there's a 'popularity' field)
-      sortOption = { popularity: -1 };
+      // Default sort by createdAt
+      sortOption = { createdAt: -1 };
     }
 
     const products = await ProductModel.find(query)
       .sort(sortOption)
       .skip(reqCount * limit)
       .limit(limit);
-      
+
+    if (!products) {
+      throw new Error('No products found');
+    }
 
     return products;
   } catch (error) {
     console.error('Error fetching products:', error);
-    return [];
+    throw error;
   }
 }
 
@@ -195,7 +198,6 @@ export async function browseProducts(reqCount, limit, filters) {
     const products = await ProductModel.find(query.length > 0 ? { $or: query } : {})
       .skip(skip)
       .limit(limit);
-    console.log("===================")
     return products;
   } catch (e) {
     console.log(e);
@@ -222,5 +224,6 @@ export async function countProductsBasedOnFilters(filters) {
     return 0;
   }
 }
+
 
 
