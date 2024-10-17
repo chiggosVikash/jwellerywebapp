@@ -42,7 +42,6 @@ export async function POST(req) {
   try {
     const body = await req.json()
     const product = await createProduct(body)
-    console.log("product created", product)
     if (!product) {
       throw new Error("Failed to create product")
     }

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,6 +11,7 @@ import SuccessDialogue from './SuccessDialogue.jsx';
 import LoadingDialogue from './LoadingDialogue.jsx';
 import productSchema from '@/schemas/ProductSchema.js'
 import { useSaveProduct } from '@/context/SaveProduct';
+import {categories} from '../utils/constants/constant_data.js'
 
 const AddProduct = () => {
 
@@ -94,22 +95,39 @@ const AddProduct = () => {
             />
             {errors.productName && <p className="text-red-500 text-sm mt-1">{errors.productName.message}</p>}
           </div>
+          {/* Category Section */}
           <div>
             <label className="block text-sm font-medium mb-1">Category</label>
-            <input
+            {/* <input
               {...register('category')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Category"
-            />
+            /> */}
+            <select 
+            {...register('category')}
+            className='w-full px-4 py-2 border rounded-md'>
+              <option value=''>Select Category</option>
+              {categories.map((category, index) => (
+                <option key={index} value={category.name}>{category.name}</option>
+              ))}
+            </select>
             {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>}
           </div>
+
+          {/* Sub-Category Section */}
           <div>
             <label className="block text-sm font-medium mb-1">Sub-Category</label>
-            <input
+            <select
               {...register('subCategory')}
               className="w-full px-4 py-2 border rounded-md"
-              placeholder="Sub-Category"
-            />
+            > 
+              <option value="">Select Sub-Category</option>
+              {
+               categories[0].subCategories.map((subCategory, index) => (
+                <option key={index} value={subCategory.name}>{subCategory.name}</option>
+               ))
+              }
+            </select>
             {errors.subCategory && <p className="text-red-500 text-sm mt-1">{errors.subCategory.message}</p>}
           </div>
           <div>
@@ -197,22 +215,22 @@ const AddProduct = () => {
         <h3 className="text-lg font-semibold mb-4">Dimensions & Size</h3>
         <div className="grid grid-cols-2 gap-8 mb-6">
           <div>
-            <label className="block text-sm font-medium mb-1">Jhumka Height (cm)</label>
+            <label className="block text-sm font-medium mb-1">Height (cm)</label>
             <input
-              {...register('jhumkaHeight')}
+              {...register('height')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Height (cm)"
             />
-            {errors.jhumkaHeight && <p className="text-red-500 text-sm mt-1">{errors.jhumkaHeight.message}</p>}
+            {errors.height && <p className="text-red-500 text-sm mt-1">{errors.height.message}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Jhumka Width (cm)</label>
+            <label className="block text-sm font-medium mb-1">Width (cm)</label>
             <input
-              {...register('jhumkaWidth')}
+              {...register('width')}
               className="w-full px-4 py-2 border rounded-md"
               placeholder="Width (cm)"
             />
-            {errors.jhumkaWidth && <p className="text-red-500 text-sm mt-1">{errors.jhumkaWidth.message}</p>}
+            {errors.width && <p className="text-red-500 text-sm mt-1">{errors.width.message}</p>}
           </div>
         </div>
 
