@@ -7,6 +7,11 @@ export const menuItems = [
     link: "/",
   },
   {
+    title:"Add Product",
+    icon:<IoAddCircle className="inline mr-2 text-secondary"/>,
+    link:"/add-product"
+  },
+  {
     title: "Add Products",
     icon: <IoAddCircle className="inline mr-2 text-secondary"/>,
     link: "/add-products",

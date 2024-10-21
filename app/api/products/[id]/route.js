@@ -19,9 +19,8 @@ import {NextResponse} from "next/server"
  * If the product is not found, it returns a 404 status with an error message.
  * If there's an error during the process, it returns a 500 status with an error message.
  */
-export async function GET(req,{ params }) {
+export async function GET(_,{ params }) {
     try {
-        console.log(req.url)
         const { id } = params
         const product = await getProductById(id)
         if (!product) {
@@ -36,7 +35,12 @@ export async function GET(req,{ params }) {
 
 export async function PUT(req){
     try{
-        const reqData = req.json()
+        const reqData = await req.json()
+        const product = await updateProductById(reqData.id,reqData)
+        if(!product){
+            return NextResponse.json({error:"Product not found"},{status:404})
+        }
+        return NextResponse.json({data:"Product updated successfully",product:product},{status:200})
     }catch(e){
         NextResponse.status(500).json({data:"Error updating product",error:e})
     }

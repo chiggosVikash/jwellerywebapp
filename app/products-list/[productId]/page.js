@@ -3,32 +3,20 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback ,useState,useEffect} from 'react';
-import axios from 'axios';
 import { FiEdit2, FiTrash2, FiShoppingCart, FiAward } from 'react-icons/fi';
-import Spinner from '@/app/Components/Spinner';
+import Spinner from '@/app/components/Spinner';
+import { useProductStore } from '@/app/stores/productStore';
+
 export default function ProductDetailsPage({ params }) {
-    const [product,setProduct] = useState(null)
-    const [isLoading,setIsLoading] = useState(false)
-    const [selectedImage,setSelectedImage] = useState(null)
+
+    const {product,isLoading,getProduct,error,selectedImage,setSelectedImage} = useProductStore()
+ 
     /*
     Fetch the product data using the productId
     */
     const fetchProducts = useCallback(async()=>{
-        try{
-            const productId = params.productId;
-            setIsLoading(true)
-            const response = await axios.get(`/api/products/${productId}`)
-            if(response.status === 200){
-                setProduct(response.data.data)
-                setSelectedImage(response.data.data.productImages[0])
-            }
-        }catch(e){
-            console.log("Error in fetching product details")
-            console.log(e)
-        }finally{
-            setIsLoading(false)
-        }
-    },[params.productId])
+      await getProduct(params.productId)
+    },[params.productId,getProduct])
 
     useEffect(()=>{
         fetchProducts()
@@ -40,10 +28,19 @@ export default function ProductDetailsPage({ params }) {
             <Spinner/>
         </div>
     }
+    if(error){
+        return <div className="flex items-center justify-center h-screen">
+          {error}
+        </div>
+    }
 
     if(!product){
-        return <div>Product not found</div>
+        return <div className="flex items-center justify-center h-screen">
+          Product not found
+        </div>
     }
+
+   
     return (
         <div className="bg-gray-100 min-h-screen">
             
@@ -75,7 +72,7 @@ export default function ProductDetailsPage({ params }) {
                             <div>
                                 <h1 className="text-3xl font-bold mb-2 text-gray-800">{product.productName}</h1>
                                 <p className="text-sm text-gray-500 mb-4">SKU: {product.sku}</p>
-                                <p className="text-2xl font-semibold mb-6 text-indigo-600">${product.sellingPrice.toLocaleString()}</p>
+                                <p className="text-2xl font-semibold mb-6 text-indigo-600">₹{product.sellingPrice.toLocaleString('en-IN')}</p>
                                 <p className="mb-6 text-gray-700 leading-relaxed">{product.description}</p>
                                 
                                 <div className="grid grid-cols-2 gap-4 mb-6">
@@ -99,7 +96,7 @@ export default function ProductDetailsPage({ params }) {
                             </div>
 
                             <div className="flex space-x-4 mt-8">
-                                <Link href={`/products/edit/${product.productId}`} className="flex-1 bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center">
+                                <Link href={`/products-list/edit/${product.productId}`} className="flex-1 bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center">
                                     <FiEdit2 className="mr-2" /> Edit Product
                                 </Link>
                                 <button className="flex-1 bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors flex items-center justify-center">

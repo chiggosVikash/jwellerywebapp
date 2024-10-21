@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import SidebarMenu from './Components/SidebarMenu'
+import SidebarMenu from './components/SidebarMenu'
 
 const page = () => {
   return (

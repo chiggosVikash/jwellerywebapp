@@ -21,10 +21,12 @@ export async function GET(req) {
 
     // if query is not present, get products
     const reqCount = parseInt(searchParams.get("reqCount") || 0);
-    const limit = parseInt(searchParams.get("limit") || 10);
+    const limit = parseInt(searchParams.get("limit") || 30);
     const category = searchParams.get("category") || "";
     const subCategory = searchParams.get("subCategory") || "";
     const sortBy = searchParams.get("sortBy") || "";
+
+    console.log("reqCount", reqCount, "limit", limit, "category", category, "subCategory", subCategory, "sortBy", sortBy)
 
     const products = await getProducts(reqCount, limit, category, subCategory, sortBy);
     return Response.json({ data: products }, { status: 200 });

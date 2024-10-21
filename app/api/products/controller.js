@@ -225,5 +225,16 @@ export async function countProductsBasedOnFilters(filters) {
   }
 }
 
+export async function updateProductById(id,productData){
+  try{
+    await dbConnect()
+    const product = await ProductModel.findByIdAndUpdate(id,productData)
+    return product
+  }catch(e){
+    console.log(e)
+    return null
+  }
+}
+
 
 

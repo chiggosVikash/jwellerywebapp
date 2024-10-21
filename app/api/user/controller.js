@@ -1,8 +1,9 @@
 import UserModel from "@/app/models/UserModel";
-
+import dbConnect from "@/app/utils/dbConnect";
 
 export async function createUser(data){
     try{
+        await dbConnect()
         const user = await UserModel.create(data);
         return user;
     }catch(e){
@@ -15,6 +16,7 @@ export async function createUser(data){
 
 export async function isUserExists(email){
     try{
+        await dbConnect()
         const user = await UserModel.findOne({email:email});
         if(user){
             return true;

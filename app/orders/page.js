@@ -1,9 +1,9 @@
 'use client';
 import {React, useState } from 'react';
-import Header from '../Components/Header';
-import SearchField from '../Components/SearchField';
-import SortingField from '../Components/SortingField';
-import OrderStatusFilter from '../Components/OrderStatusFIlter';
+import Header from '../components/Header';
+import SearchField from '../components/SearchField';
+import SortingField from '../components/SortingField';
+import OrderStatusFilter from '../components/OrderStatusFIlter';
 
 
 const OrdersView = () => {

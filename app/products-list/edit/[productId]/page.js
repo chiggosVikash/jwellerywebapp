@@ -1,13 +1,13 @@
 import React from 'react'
-import AddProductForm from '../components/AddProductForm'
-import Header from '../components/Header';
-import ImageUpload from '../components/UploadProductImage';
+import AddProductForm from '../../../components/AddProductForm'
+import Header from '../../../components/Header';
+import ImageUpload from '../../../components/UploadProductImage';
 import { PictureProvider } from '@/context/Pictures';
 import { SaveProductProvider } from '@/context/SaveProduct';
 
 
 
-const AddProductPage = () => {
+const EditProductPage = () => {
   return (
     <div className='h-max py-navBarPadding'>
        <Header header={"Add Products"}/>
@@ -25,4 +25,4 @@ const AddProductPage = () => {
   )
 }
 
-export default AddProductPage
+export default EditProductPage
