@@ -6,23 +6,28 @@ const ProductSchema = new mongoose.Schema({
     required:[true,"Please add at least one image"],
     default:[]
   },
+  materialSpecs:{
+    type:[{
+      materialType: String,
+      materialWeight: String,
+      materialQuality:String,
+      materialPrice:Number,
+      materialDiscount:{type:Number,default:0},
+    }],
+    default:{}
+  },
+  careInstructions:{
+    type:[String],
+    default:[]
+  },
   productId: { type: String, unique: [true,"Product ID must be unique"], required: true },
-  productName: { type: String, required: true },
-  category: { type: String, required: true },
+  productName: { type: String,},
+  category: { type: String,  },
   subCategory: String,
-  sku: { type: String, unique: [true,"SKU must be unique"], required: true },
+  sku: { type: String, unique: [true,"SKU must be unique"] },
   description: String,
-  goldKarat: String,
-  goldWeight: Number,
-  diamondCarat: Number,
-  diamondQuality: String,
-  numberOfDiamonds: Number,
-  metalType: String,
-  height: Number,
-  width: Number,
-  costPrice: { type: Number, required: true },
-  sellingPrice: { type: Number, required: true },
-  makingCharges: Number,
+  costPrice: { type: Number, },
+  sellingPrice: { type: Number, },
   discount: Number,
   quantityAvailable: { type: Number, default: 0 },
   taxDetails: String,
@@ -34,21 +39,11 @@ const ProductSchema = new mongoose.Schema({
   gender: {
     type: String,
     enum: ['Male','Female','Child',"Unisex"],
-    required: [true,"Gender is required"]
   },
-  // supplierName: String,
-  // manufacturerDetails: String,
-  // countryOfOrigin: String,
-  // seoTitle: String,
-  // metaDescription: String,
-  // keywords: [String],
-  // tags: [String],
-  // shippingWeight: Number,
-  // shippingClass: String,
-  // leadTime: String,
-  // shippingCharges: Number,
-  // specialInstructions: String,
-  // notes: String,
+  isPublished:{
+    type:Boolean,
+    default:false
+  }
 }, { timestamps: true });
 
 const ProductModel = mongoose.models.Product || mongoose.model('Product', ProductSchema);

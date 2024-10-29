@@ -1,4 +1,4 @@
-import {getStorage,ref,uploadBytes,getDownloadURL} from 'firebase/storage';
+import {getStorage,ref,uploadBytes,getDownloadURL,deleteObject} from 'firebase/storage';
 import {firebaseApp} from '../lib/db/firebase_config';
 
 const storage = getStorage(firebaseApp);
@@ -13,6 +13,12 @@ export async function uploadImages(images){
         return url;
     });
     return Promise.all(promises);
+}
+
+export async function deleteImage(imageUrl){
+    const imageRef = ref(storage, imageUrl);
+    await deleteObject(imageRef);
+    return true;
 }
 
 
