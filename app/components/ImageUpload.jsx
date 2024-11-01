@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { FaTimes } from 'react-icons/fa'; // Import the cross icon
 
+import { useImageStore } from '../stores/imageStore';
+
 const ImageUpload = () => {
-  const [images, setImages] = useState([]);
+
+  const {images,addImages,removeImage} = useImageStore();
+
 
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
-    setImages((prevImages) => [...prevImages, ...files]);
+    addImages(files);
   };
 
   const handleRemoveImage = (index) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    removeImage(index);
   };
 
   return (

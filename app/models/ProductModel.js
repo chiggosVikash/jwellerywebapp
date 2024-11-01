@@ -24,7 +24,7 @@ const ProductSchema = new mongoose.Schema({
   productName: { type: String,},
   category: { type: String,  },
   subCategory: String,
-  sku: { type: String, unique: [true,"SKU must be unique"] },
+  sku: { type: String, },
   description: String,
   costPrice: { type: Number, },
   sellingPrice: { type: Number, },

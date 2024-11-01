@@ -2,13 +2,28 @@ import React from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import Input from './Input'
 import Select from './Select'
+import { Button } from '@/components/ui/button'
+import { useProductDetailsStore } from '../stores/productDetailsStore'
+import { ShowDialog } from '../product/[action]/page'
 
 const ProductDetailsForm = () => {
   const methods = useForm()
+  const { saveProductDetails,saving,error,isSaved,resetProcessStatus } = useProductDetailsStore()
+
 
   const onSubmit = (data) => {
-    console.log(data)
+    saveProductDetails(data)
   }
+
+  const closeDialog = () => {
+    if(!error && !saving){
+      methods.reset()
+    }
+    resetProcessStatus()
+
+  }
+
+
 
   const categories = [
     { value: 'gold', label: 'Gold' },
@@ -57,18 +72,21 @@ const ProductDetailsForm = () => {
   return (
     <div className='max-w-7xl flex flex-col  p-4 bg-surface rounded-lg mx-8 my-10'>
       <h2 className="text-lg font-bold mb-4">Product Details</h2>
+      <ShowDialog isOpen={(saving || error || isSaved)} closeDialog={closeDialog} status={saving ? "loading" : error ? "error" : "success"} title={"Product Details"} />
 
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="px-6 py-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <Input name="productName" label="Product Name" placeholder='Enter Product Name' rules={{ required: 'Product Name is required' }} />
-            <Select name="collection" label="Collection" options={collections} rules={{ required: 'Collection is required' }} />
-            <Select name="categories" label="Categories" options={categories} rules={{ required: 'Categories is required' }} />
+            <Select name="productCollection" label="Collection" options={collections} rules={{ required: 'Collection is required' }} />
+            <Select name="category" label="Categories" options={categories} rules={{ required: 'Categories is required' }} />
             <Select name="gender" label="Gender" options={genders} rules={{ required: 'Gender is required' }} />
             <Select name="subCategory" label="Sub-Category" options={subCategories} rules={{ required: 'Sub-Category is required' }} />
-            <Input name="availableQty" label="Available qty" type="number" placeholder='Enter Available qty' rules={{ required: 'Available qty is required' }} />
-            <Input name="skuId" label="SKU-ID" placeholder='Enter SKU-ID' rules={{ required: 'SKU-ID is required' }} />
-            <Input name="availableStatus" label="Available Status" placeholder='Enter Available Status' rules={{ required: 'Available Status is required' }} />
+            <Input name="quantityAvailable" label="Available qty" type="number" placeholder='Enter Available qty' rules={{ required: 'Available qty is required' }} />
+            <Input name="sku" label="SKU-ID" placeholder='Enter SKU-ID' rules={{ required: 'SKU-ID is required' }} />
+            <Input name="availabilityStatus" label="Available Status" placeholder='Enter Available Status' rules={{ required: 'Available Status is required' }} />
+
+            <Button type="submit" variant="primary" >Save Details </Button>
           </div>
         </form>
       </FormProvider>

@@ -3,14 +3,13 @@ import {NextResponse} from "next/server"
 
 export async function POST(req){
     try{
-        const {productId,images} = await req.json()
-        const product = await createProductAndUploadImage(productId,images)
+        const {productId,productImages} = await req.json()
+        const product = await createProductAndUploadImage(productId,productImages)
         if(!product){
             throw new Error("Failed to create product")
         }
-        return NextResponse.json({message:"Product Created"},{status:201})
+        return NextResponse.json({message:"Product Created","id":product},{status:201})
     }catch(error){
-        console.error("Error in POST request:",error);
-        return NextResponse.error(`Failed ${error}`,{status:500})
+        return NextResponse.error(`Failed ${error.message}`,{status:500})
     }
 }

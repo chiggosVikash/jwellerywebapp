@@ -2,14 +2,18 @@ import ProductModel from "@/app/models/ProductModel";
 import {dbConnect} from "@/app/lib/db/dbConnect";
 import {deleteImage} from "@/app/services/firebase_storage_service";
 
-export async function createProductAndUploadImage(productId,images){
+export async function createProductAndUploadImage(productId,productImages){
+    const product = {
+        productId,
+        productImages
+    }
     try{
         await dbConnect();
-        const product = await ProductModel.create({productId,productImages:images})
-        return product._id;
+        const result = await ProductModel.create(product);
+        return result._id;
     }catch(e){
-        console.log(e)
-        return null;
+        const message = e.errorResponse.errmsg || e.message;
+        throw new Error(message);
     }
 }
 
@@ -28,3 +32,4 @@ export async function deleteImageByUrl(imageUrl,productId){
         return null;
     }
 }
+
