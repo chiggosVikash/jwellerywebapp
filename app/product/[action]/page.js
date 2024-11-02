@@ -1,5 +1,5 @@
 'use client'
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from '@/app/components/Header'
 import { Stepper, Step, StepLabel } from '@mui/material'
 import ImageUpload from '@/app/components/ImageUpload'
@@ -8,7 +8,8 @@ import MaterialSpecifications from '@/app/components/MaterialSpecifications'
 import CareInstructions from '@/app/components/CareInstructions'
 import { useImageStore } from '@/app/stores/imageStore'
 import Spinner from '@/app/components/Spinner'
- 
+import { usePathname } from 'next/navigation';
+
 import {
   Dialog,
   DialogClose,
@@ -18,27 +19,35 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Button } from '@/components/ui/button'
 
 const steps = ['Upload Images', 'Product Details', 'Material Specifications', 'Care Instructions']
 
 const NewAddProductPage = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const { saveImages, isLoading, error,isSuccess,resetProcessStatus } = useImageStore();
-  // const { setError,setSuccess,setLoading } = useServerResponseStore();
+  const { isLoading } = useImageStore();
+
+  const pathName = usePathname()
 
 
-  const closeDialog = () => {
+  // const closeDialog = () => {
 
-    if(!error && !isLoading){
-      setActiveStep((prev) => prev + 1)
+  //   if(!error && !isLoading){
+  //     setActiveStep((prev) => prev + 1)
+  //   }
+  //   resetProcessStatus()
+
+
+  // }
+
+  useEffect(() => {
+    if (pathName === "/product/add") {
+      localStorage.removeItem("id")
     }
-    resetProcessStatus()
-  
-   
-  }
+  }, [pathName]);
 
 
-  
+
   // useEffect(() => {
   //   console.log("useEffect updated")
 
@@ -53,7 +62,7 @@ const NewAddProductPage = () => {
   //   }
 
 
-    
+
   // }, [error,setError,setSuccess,isSuccess,isLoading,setLoading])
 
 
@@ -61,12 +70,7 @@ const NewAddProductPage = () => {
 
 
   const handleNext = async () => {
-    if (activeStep === 0) {
-      await saveImages();
-      return;
-    }
     setActiveStep((prev) => prev + 1);
-    
   };
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
@@ -83,13 +87,13 @@ const NewAddProductPage = () => {
   return (
     <div className='h-max py-navBarPadding'>
       <Header header={'Add New Products'} />
-     
-      <ShowDialog 
+
+      {/* <ShowDialog 
       isOpen = {isSuccess || error || isLoading}
       closeDialog = {closeDialog}
       status = {isSuccess ? "success" : error ? "error" : isLoading ? "loading" : null}
-      title={activeStep === 0 ? "Image Upload" : activeStep === 1 ? "Product Details" : activeStep === 2 ? "Material Specifications" : "Care Instructions"} />
-      
+      title={activeStep === 0 ? "Image Upload" : activeStep === 1 ? "Product Details" : activeStep === 2 ? "Material Specifications" : "Care Instructions"} /> */}
+
       <div className='max-w-7xl bg-white my-5 py-8 rounded-lg mx-10'>
         {/* Stepper  */}
         <Stepper activeStep={activeStep} alternativeLabel>
@@ -104,21 +108,20 @@ const NewAddProductPage = () => {
           <React.Fragment>
             {renderStepComponent()}
             <div className='flex items-center justify-between mx-10'>
-              <button
+              <Button
+                variant='outline'
                 onClick={isLoading ? null : handleBack}
                 disabled={activeStep === 0}
-                className={`text-base border border-gray-300 uppercase  text-onPrimary py-2 px-6 rounded-lg transition duration-300 disabled:opacity-50`}
               >
                 Back
-              </button>
-              <button
+              </Button>
+              <Button
                 type='submit'
-                onClick= {isLoading ? null : handleNext}
-                className={`text-base bg-onPrimary uppercase text-white py-2 px-6 rounded-lg transition duration-300 
-                  hover:bg-secondary`}
+                onClick={isLoading ? null : handleNext}
+
               >
-                {isLoading ? <Spinner /> : activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              </button>
+                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+              </Button>
             </div>
           </React.Fragment>
         )}
@@ -131,12 +134,12 @@ const NewAddProductPage = () => {
 export default NewAddProductPage
 
 
-export function ShowDialog({isOpen,closeDialog,status,title}) {
+export function ShowDialog({ isOpen, closeDialog, status, title }) {
 
 
 
   return (
-    <Dialog open = {isOpen}>
+    <Dialog open={isOpen}>
       {/* <DialogTrigger asChild>
         <button type="button">Open dialog</button>
       </DialogTrigger> */}
@@ -144,20 +147,20 @@ export function ShowDialog({isOpen,closeDialog,status,title}) {
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            { status === "loading" ? <Spinner /> : status ==="error" ? error :  `${title} process completed successfully`}
+            {status === "loading" ? <Spinner /> : status === "error" ? error : `${title} process completed successfully`}
           </DialogDescription>
         </DialogHeader>
 
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
-            <button
+            <Button
               onClick={() => {
                 closeDialog()
               }
-            }
-            type="button" variant="secondary">
-              Next
-            </button>
+              }
+              type="button" variant="secondary">
+              Close
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

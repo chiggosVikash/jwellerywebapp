@@ -70,7 +70,7 @@ const ProductDetailsForm = () => {
   ];
 
   return (
-    <div className='max-w-7xl flex flex-col  p-4 bg-surface rounded-lg mx-8 my-10'>
+    <div className='max-w-7xl flex flex-col  p-4 bg-gray-50 rounded-lg mx-8 my-10'>
       <h2 className="text-lg font-bold mb-4">Product Details</h2>
       <ShowDialog isOpen={(saving || error || isSaved)} closeDialog={closeDialog} status={saving ? "loading" : error ? "error" : "success"} title={"Product Details"} />
 
@@ -86,7 +86,10 @@ const ProductDetailsForm = () => {
             <Input name="sku" label="SKU-ID" placeholder='Enter SKU-ID' rules={{ required: 'SKU-ID is required' }} />
             <Input name="availabilityStatus" label="Available Status" placeholder='Enter Available Status' rules={{ required: 'Available Status is required' }} />
 
-            <Button type="submit" variant="primary" >Save Details </Button>
+          
+          </div>
+          <div className="flex  mt-4">
+            <Button type="submit"  className="w-32">Save</Button>
           </div>
         </form>
       </FormProvider>

@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import Input from './Input';
 import Select from './Select';
+import { FaTimes } from 'react-icons/fa';
+import { Button } from '@/components/ui/button';
 
 const MaterialSpecifications = () => {
   const methods = useForm();
   const { handleSubmit } = methods;
   const [materials, setMaterials] = useState([]);
 
-  const materialOptions = [
-    { value: 'rajasthani_kohinoor', label: 'Rajasthani Kohinoor' },
-    { value: 'himawari_gold', label: 'Himawari Gold' },
-    // Add more options as needed
-  ];
+  // const materialOptions = [
+  //   { value: 'rajasthani_kohinoor', label: 'Rajasthani Kohinoor' },
+  //   { value: 'himawari_gold', label: 'Himawari Gold' },
+  //   // Add more options as needed
+  // ];
 
   const onSubmit = (data) => {
     setMaterials((prev) => [...prev, data]);
@@ -21,18 +23,23 @@ const MaterialSpecifications = () => {
   };
 
   return (
-    <div className='max-w-7xl flex flex-col  p-4 bg-surface rounded-lg mx-8 my-10'>
+    <div className='max-w-7xl flex flex-col  p-4 bg-gray-50 rounded-lg mx-8 my-10'>
         <h2 className='text-lg font-bold mb-4'>Material Specifications</h2>
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 ">
         {/* Left Section */}
         <div className="col-span-1 space-y-4 border border-gray-200 rounded-lg p-4">
-        <Select 
+            <Input 
               name="materialType" 
               label="Material Type" 
-              options={materialOptions} 
+              placeholder="e.g. Diamond" 
             />
-           
+            <Input 
+              type='number'
+              name="quantity" 
+              label="Quantity" 
+              placeholder="e.g. 10" 
+            />
           <div className="grid grid-cols-2 gap-4">
              <Input 
               name="materialWeight" 
@@ -65,22 +72,25 @@ const MaterialSpecifications = () => {
             placeholder="Enter discount" 
           />
           </div>
-           <button type="submit" className="bg-primary text-onPrimary px-4 py-2 rounded">
+           <Button type="submit">
             Add Material
-          </button>
+          </Button>
         </div>
 
         {/* Right Section */}
         <div className="col-span-1 ml-4">
-          <h2 className="text-lg font-semibold">Materials List</h2>
+          <h2 className="text-lg font-semibold mb-2">Materials List</h2>
           <div className="space-y-4">
             {materials.map((material, index) => (
-              <div key={index} className="border p-4 rounded shadow">
+              <div key={index} className="relative border p-6 m-2 bg-white rounded shadow">
                 <h3 className="font-bold">{material.materialType}</h3>
                 <p>Weight: {material.materialWeight}</p>
                 <p>Quantity: {material.quantity}</p>
+                <p>Quality: {material.quality}</p>
                 <p>Price: {material.price}</p>
-                <p>Discount: {material.discount}</p>
+                <p>Discount: {material.discount}</p> 
+                <FaTimes className='absolute top-2 right-2 cursor-pointer text-xl text-red-700'/>
+
               </div>
             ))}
           </div>

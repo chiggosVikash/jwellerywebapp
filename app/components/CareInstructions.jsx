@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import Input from './Input'
 import { FaTrash, FaPlus } from 'react-icons/fa' // Importing the add icon
+import { Button } from '@/components/ui/button'
 
 const CareInstructions = () => {
   const methods = useForm()
@@ -17,7 +18,7 @@ const CareInstructions = () => {
     setInstructions(newInstructions)
   }
   return (
-    <div className='max-w-7xl flex flex-col  p-4 bg-surface rounded-lg mx-8 my-10'>
+    <div className='max-w-7xl flex flex-col  p-4 bg-gray-50 rounded-lg mx-8 my-10'>
         <h2 className='text-lg font-bold mb-4'>Care Instructions</h2>
         <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col md:flex-row">
@@ -28,19 +29,23 @@ const CareInstructions = () => {
             placeholder="Enter care instruction" 
             rules={{ required: "This field is required" }} 
           />
-          <button type="submit" className="mt-2 px-4 py-2 bg-primary text-onPrimary rounded flex items-center justify-center">
-            <FaPlus className="inline mr-2 text-sm" /> Add
-          </button>
+          <Button type="submit" variant="outline" className='w-28 my-4' >
+            <FaPlus/> Add
+          </Button>
         </div>
+
         <div className="md:w-1/2 p-4">
           {instructions.map((instruction, index) => (
             <div key={index} className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded">
               <span>{instruction}</span>
-              <button onClick={() => handleDelete(index)} className="text-red-500">
+              <button onClick={() => handleDelete(index)} className=" cursor-pointer text-red-700">
                 <FaTrash />
               </button>
             </div>
           ))}
+          {instructions.length >= 1 && <Button type="submit"  className='w-28 my-4' >
+            Save
+          </Button>}
         </div>
       </form>
     </FormProvider>
