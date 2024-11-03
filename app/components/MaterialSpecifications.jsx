@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import Input from './Input';
 import Select from './Select';
@@ -10,8 +10,13 @@ import { ShowDialog } from '../product/[action]/page';
 const MaterialSpecifications = () => {
   const methods = useForm();
   const { handleSubmit } = methods;
-  const { materialSpecs, addMaterialSpec, removeMaterialSpec, isLoading,error,isSuccessful,resetProcessStatus, saveMaterialSpecs } = useMaterialSpecStore()
+  const { 
+    getMaterialSpecs
+    ,materialSpecs, addMaterialSpec, removeMaterialSpec, isLoading,error,isSuccessful,resetProcessStatus, saveMaterialSpecs } = useMaterialSpecStore()
 
+  useEffect(() => {
+    getMaterialSpecs();
+  },[getMaterialSpecs]);
   // const materialOptions = [
   //   { value: 'rajasthani_kohinoor', label: 'Rajasthani Kohinoor' },
   //   { value: 'himawari_gold', label: 'Himawari Gold' },

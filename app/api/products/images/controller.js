@@ -36,8 +36,8 @@ export async function deleteImageByUrl(imageUrl,id){
 export async function getImages(id){
     try{
         await dbConnect();
-        const product = await ProductModel.findById(id).select("productImages");
-        return product.productImages;
+        const product = await ProductModel.findById(id).select(["productImages","productId"]);
+        return {productImages:product.productImages,productId:product.productId};
     }catch(e){
         return e.message || "Failed to get images";
     }

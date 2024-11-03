@@ -58,10 +58,10 @@ export async function getProducts(reqCount, limit, category, subCategory, sortBy
     
     let query = {};
     if (category && category.trim() !== '') {
-      query.category = category;
+      query.category = category.toLowerCase();
     }
     if (subCategory && subCategory.trim() !== '') {
-      query.subCategory = subCategory;
+      query.subCategory = subCategory.toLowerCase();
     }
 
     let sortOption = {};
@@ -209,7 +209,7 @@ export async function countProductsBasedOnFilters(filters) {
   try {
     let query = [];
     if (filters.length > 0) {
-      query.push({ category: filters });
+      query.push({ category: filters});
       query.push({ subCategory: filters });
       query.push({ metalType: filters });
       query.push({ gender: filters });

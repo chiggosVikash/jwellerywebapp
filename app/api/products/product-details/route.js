@@ -1,5 +1,5 @@
 import {NextResponse} from 'next/server'
-import {updateProductDetails} from './controller'
+import {updateProductDetails,getProductDetails} from './controller'
 
 
 
@@ -23,8 +23,11 @@ export async function GET(req){
     try{
         const url = new URL(req.url);
         const id = url.searchParams.get('id');
-        console.log(id);
-        return Response.json({id});
+        if(!id){
+            return NextResponse.error({message:"Product ID not found"},{status:400});
+        }
+        const productDetails = await getProductDetails(id);
+        return Response.json({productDetails},{status:200});
     }catch(e){
         console.log(e);
         return Response.error(e,{status:500});

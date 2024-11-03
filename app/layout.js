@@ -16,6 +16,11 @@ export default function RootLayout({ children }) {
   return (
     <React.StrictMode>
       <html lang="en">
+        <head>
+          <title>{metadata.title}</title>
+          <meta name="description" content={metadata.description} />
+          <link rel="icon" href="/favicon.ico" />
+        </head>
         <body className={montserrat.className}>
    
             <div className="flex">

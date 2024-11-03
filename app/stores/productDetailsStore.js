@@ -38,7 +38,7 @@ export const useProductDetailsStore = create((set) => ({
             const response = await axios.get('/api/products/product-details',{params:{id}})
             if(response.status === 200){
                 set({productDetails:response.data.productDetails,saving:false})
-                return;
+                return response.data.productDetails;
             }
             throw new Error('Failed to get product details')
         }catch(e){

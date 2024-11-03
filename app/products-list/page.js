@@ -153,7 +153,13 @@ const ProductCard = ({ product, router }) => (
         >
           View
         </button>
-        <button className='bg-secondary text-onPrimary font-semibold px-8 py-2 rounded-lg mt-4 mr-4'>
+        <button 
+        onClick={() => {
+         
+          localStorage.setItem("id",product._id)
+          router.push(`/product/edit`)
+        }}
+        className='bg-secondary text-onPrimary font-semibold px-8 py-2 rounded-lg mt-4 mr-4'>
           Edit
         </button>
         <button className='bg-red-100 text-red-900 font-semibold px-8 py-2 rounded-lg mt-4'>

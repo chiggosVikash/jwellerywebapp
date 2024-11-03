@@ -5,8 +5,11 @@ import { FaTimes } from 'react-icons/fa'; // Import the cross icon
 import { Button } from '@/components/ui/button';
 import { useImageStore } from '../stores/imageStore';
 import { ShowDialog } from '../product/[action]/page';
+import { usePathname } from 'next/navigation';
 
 const ImageUpload = () => {
+  const pathName = usePathname()
+  
 
   const { saveImages, 
     isLoading, 
@@ -18,8 +21,17 @@ const ImageUpload = () => {
     removeImage,
     getImages,
     imageUrls,
+    clearImages,
     isUrl
   } = useImageStore();
+
+  useEffect(() => {
+    if (pathName === "/product/add") {
+      localStorage.removeItem("id")
+      clearImages()
+      
+    }
+  }, [pathName,clearImages]);
 
   useEffect(()=>{
     getImages()
@@ -38,8 +50,8 @@ const ImageUpload = () => {
     addImages(files);
   };
 
-  const handleRemoveImage = (index) => {
-    removeImage(index);
+  const handleRemoveImage = (image) => {
+    removeImage(image);
   };
 
   return (
@@ -81,7 +93,7 @@ const ImageUpload = () => {
                   className="rounded-lg h-full w-full"
                 />
                 <button
-                  onClick={() => handleRemoveImage(index)}
+                  onClick={() => handleRemoveImage(image)}
                   className="absolute -top-2 -right-2 bg-white w-7 h-7 rounded-full items-center flex justify-center shadow-lg"
                 >
                   <FaTimes />

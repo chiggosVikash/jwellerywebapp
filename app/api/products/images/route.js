@@ -21,7 +21,7 @@ export async function GET(req){
         const productId = url.searchParams.get("id")
         checkId(productId)
         const images = await getImages(productId)
-        return NextResponse.json({images},{status:200})
+        return NextResponse.json(images,{status:200})
 
     }catch(e){
         if(e.message === "Product ID is required"){

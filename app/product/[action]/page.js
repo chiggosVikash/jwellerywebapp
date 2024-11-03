@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState,useEffect } from 'react'
 import Header from '@/app/components/Header'
 import { Stepper, Step, StepLabel } from '@mui/material'
 import ImageUpload from '@/app/components/ImageUpload'
@@ -8,7 +8,9 @@ import MaterialSpecifications from '@/app/components/MaterialSpecifications'
 import CareInstructions from '@/app/components/CareInstructions'
 import { useImageStore } from '@/app/stores/imageStore'
 import Spinner from '@/app/components/Spinner'
-import { usePathname } from 'next/navigation';
+// import { usePathname } from 'next/navigation';
+import { authStore } from '../../stores/authStore'
+import { useRouter } from 'next/navigation';
 
 import {
   Dialog,
@@ -27,49 +29,24 @@ const NewAddProductPage = () => {
   const [activeStep, setActiveStep] = useState(0);
   const { isLoading } = useImageStore();
 
-  const pathName = usePathname()
+  const router = useRouter()
+  const {cookiesStatus} = authStore()
 
-
-  // const closeDialog = () => {
-
-  //   if(!error && !isLoading){
-  //     setActiveStep((prev) => prev + 1)
-  //   }
-  //   resetProcessStatus()
-
-
-  // }
-
-  useEffect(() => {
-    if (pathName === "/product/add") {
-      localStorage.removeItem("id")
+  useEffect(()=>{
+    const isValid = cookiesStatus()
+    if(!isValid){
+      router.push("/signin")
     }
-  }, [pathName]);
-
-
-
-  // useEffect(() => {
-  //   console.log("useEffect updated")
-
-  //   if(isLoading){
-  //     setLoading()
-  //   }
-  //   else if(error){
-  //     setError(error)
-  //   }
-  //   else if(isSuccess){
-  //     setSuccess(true,"images uploaded successfully")
-  //   }
-
-
-
-  // }, [error,setError,setSuccess,isSuccess,isLoading,setLoading])
-
-
+  },[cookiesStatus,router]
+  )
 
 
 
   const handleNext = async () => {
+    if(activeStep === steps.length - 1){
+      // push to products page 
+      router.push("/products-list")
+    }
     setActiveStep((prev) => prev + 1);
   };
   const handleBack = () => setActiveStep((prev) => prev - 1);

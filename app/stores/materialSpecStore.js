@@ -38,5 +38,23 @@ export const useMaterialSpecStore = create((set,get)=>({
     },
     resetProcessStatus:()=>{
         set({isLoading:false,error:null,isSuccessful:false})
+    },
+
+    getMaterialSpecs: async()=>{
+        try{
+            set({isLoading:true})
+            const productId = localStorage.getItem("id")
+            if(productId === null){
+               return;
+            }
+            const response = await axios.get("/api/products/material-spec",{params:{id:productId}})
+            if(response.status === 200){
+                set({materialSpecs:response.data.materialSpecs,isLoading:false})
+                return response.data.materialSpecs;
+            }
+            throw new Error("Material Specs not found")
+        }catch(e){
+
+        }
     }
 }))

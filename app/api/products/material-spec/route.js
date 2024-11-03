@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { updateMaterialSpec } from "./controller";
+import { updateMaterialSpec,getMaterialSpecs } from "./controller";
 export async function PUT(req){
     try{    
       
@@ -25,5 +25,20 @@ export async function PUT(req){
         }
         console.log(e.message)
         return NextResponse.json({error:e.message},{status:500})
+    }
+}
+
+
+export async function GET(req){
+    try{
+        const url = new URL(req.url)
+        const productId = url.searchParams.get("id")
+        if(!productId){
+            throw new Error("Product ID is required")
+        }
+        const materialSpecs = await getMaterialSpecs(productId)
+        return Response.json({materialSpecs},{status:200})
+    }catch(e){
+        return Response.error(e.message,{status:500})
     }
 }

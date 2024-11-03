@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import Input from './Input'
 import Select from './Select'
@@ -8,7 +8,7 @@ import { ShowDialog } from '../product/[action]/page'
 
 const ProductDetailsForm = () => {
   const methods = useForm()
-  const { saveProductDetails,saving,error,isSaved,resetProcessStatus } = useProductDetailsStore()
+  const { saveProductDetails,saving,error,isSaved,resetProcessStatus,getProductDetails } = useProductDetailsStore()
 
 
   const onSubmit = (data) => {
@@ -16,12 +16,28 @@ const ProductDetailsForm = () => {
   }
 
   const closeDialog = () => {
-    if(!error && !saving){
-      methods.reset()
-    }
+    // if(!error && !saving){
+    //   methods.reset()
+    // }
     resetProcessStatus()
 
   }
+
+  useEffect(()=>{
+    getProductDetails().then((value)=>{
+      if(!value){
+        return
+      }
+      methods.setValue('productName',value.productName)
+      methods.setValue('productCollection',value.productCollection)
+      methods.setValue('category',value.category)
+      methods.setValue('gender',value.gender)
+      methods.setValue('subCategory',value.subCategory)
+      methods.setValue('quantityAvailable',value.quantityAvailable)
+      methods.setValue('sku',value.sku)
+      methods.setValue('availabilityStatus',value.availabilityStatus)
+    })
+  },[getProductDetails,methods])
 
 
 
@@ -77,7 +93,7 @@ const ProductDetailsForm = () => {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="px-6 py-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-            <Input name="productName" label="Product Name" placeholder='Enter Product Name' rules={{ required: 'Product Name is required' }} />
+            <Input  name="productName" label="Product Name" placeholder='Enter Product Name' rules={{ required: 'Product Name is required' }} />
             <Select name="productCollection" label="Collection" options={collections} rules={{ required: 'Collection is required' }} />
             <Select name="category" label="Categories" options={categories} rules={{ required: 'Categories is required' }} />
             <Select name="gender" label="Gender" options={genders} rules={{ required: 'Gender is required' }} />

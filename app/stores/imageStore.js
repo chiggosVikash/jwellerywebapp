@@ -15,13 +15,16 @@ export const useImageStore = create((set,get)=>({
     addImages:(images)=>{
         set((state)=>({imageFiles:[...state.imageFiles,...images]}))
     },
-    removeImage:(index)=>{
-        const images = get().imageFiles;
-        const image = images[index];
+    removeImage:(image)=>{
+        if(typeof image === "string"){
+            set((state)=>({imageUrls:state.imageUrls.filter(img=>img!==image)}))
+            return;
+        }
+      
         set((state)=>({imageFiles:state.imageFiles.filter(img=>img!==image)}))
     },
     clearImages:()=>{
-        set({images:[]})
+        set({imageFiles:[],imageUrls:[]})
     },
     clearError:()=>{
         set({error:null})
@@ -63,6 +66,7 @@ export const useImageStore = create((set,get)=>({
     updateImages: async()=>{
         try{    
             
+           
             const productId = get().productId;
             if(!productId){
                 throw new Error("Product ID is required")
@@ -74,13 +78,14 @@ export const useImageStore = create((set,get)=>({
             }
             const imageFiles = get().imageFiles;
             set({isLoading:true})
-            if(imageFiles.length === 0){
+            if(imageFiles.length === 0 && get().imageUrls.length === 0){
                 throw new Error("Please add images first")
             }
-            const imageUrls = await uploadImages(productId,imageFiles);
+            const imageUrls = imageFiles.length === 0 ? []: await uploadImages(productId,imageFiles);
 
+            const mergedUrls = [...get().imageUrls,...imageUrls]
             
-            const response = await axios.put("/api/products/images",{id:documentId,productImages:imageUrls})
+            const response = await axios.put("/api/products/images",{id:documentId,productImages:mergedUrls})
             if(response.status === 200){
                 set({isLoading:false,isSuccess:true})
                 return;
@@ -106,8 +111,8 @@ export const useImageStore = create((set,get)=>({
             set({isLoading:true})
             const response = await axios.get('/api/products/images',{params:{id:productId}})
             if(response.status === 200){
-                const {images} = response.data;
-                set({imageUrls:images,isLoading:false,isSuccess:false})
+                const {productImages,productId} = response.data;
+                set({imageFiles:[],productId:productId,imageUrls:productImages,isLoading:false,isSuccess:false,})
                 
                 return;
             }
