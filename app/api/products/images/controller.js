@@ -17,11 +17,11 @@ export async function createProductAndUploadImage(productId,productImages){
     }
 }
 
-export async function deleteImageByUrl(imageUrl,productId){
+export async function deleteImageByUrl(imageUrl,id){
     try{
         await dbConnect();
 
-        const product = await ProductModel.findOneAndUpdate({"productId":productId},{$pull:{productImages:imageUrl}})
+        const product = await ProductModel.findOneAndUpdate({_id:id},{$pull:{productImages:imageUrl}})
         const deleted = await deleteImage(imageUrl);
         if(!deleted){
             throw new Error("Failed to delete image")
@@ -30,6 +30,29 @@ export async function deleteImageByUrl(imageUrl,productId){
     }catch(e){
         console.log(e)
         return null;
+    }
+}
+
+export async function getImages(id){
+    try{
+        await dbConnect();
+        const product = await ProductModel.findById(id).select("productImages");
+        return product.productImages;
+    }catch(e){
+        return e.message || "Failed to get images";
+    }
+}
+
+export async function updateProductImages(id,productImages){
+    try{
+        await dbConnect();
+        const product = await ProductModel.updateOne({_id:id},{productImages});
+        if(product.modifiedCount === 0 || product.modifiedCount === null){
+            throw new Error("Failed to update images")
+        }
+        return true;
+    }catch(e){
+        return e.message || "Failed to update images";
     }
 }
 

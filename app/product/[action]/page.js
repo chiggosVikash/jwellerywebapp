@@ -134,7 +134,7 @@ const NewAddProductPage = () => {
 export default NewAddProductPage
 
 
-export function ShowDialog({ isOpen, closeDialog, status, title }) {
+export function ShowDialog({ isOpen, closeDialog, status, title,errorMessage }) {
 
 
 
@@ -147,7 +147,7 @@ export function ShowDialog({ isOpen, closeDialog, status, title }) {
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            {status === "loading" ? <Spinner /> : status === "error" ? error : `${title} process completed successfully`}
+            {status === "loading" ? <Spinner /> : status === "error" ? errorMessage ?? "Process Failed please try again" : `${title} process completed successfully`}
           </DialogDescription>
         </DialogHeader>
 

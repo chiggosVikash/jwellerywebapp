@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React,{useEffect} from 'react';
 import Image from 'next/image';
 import { FaTimes } from 'react-icons/fa'; // Import the cross icon
 import { Button } from '@/components/ui/button';
@@ -7,15 +8,28 @@ import { ShowDialog } from '../product/[action]/page';
 
 const ImageUpload = () => {
 
-  const { images, addImages, removeImage } = useImageStore();
-  const { saveImages, isLoading, error,isSuccess,resetProcessStatus } = useImageStore();
+  const { saveImages, 
+    isLoading, 
+    error,
+    isSuccess,
+    resetProcessStatus ,
+    imageFiles, 
+    addImages,
+    removeImage,
+    getImages,
+    imageUrls,
+    isUrl
+  } = useImageStore();
+
+  useEffect(()=>{
+    getImages()
+  }
+  ,[getImages])
+
 
 
   const closeDialog = () => {
-
-    if(!error && !isLoading){
-      resetProcessStatus()
-    }
+    resetProcessStatus()
   
    
   }
@@ -54,13 +68,13 @@ const ImageUpload = () => {
         <div className='h-64 w-[1px] bg-accent'></div>
         {/* Right Section */}
         <div className="w-[60%] flex flex-wrap items-center justify-center">
-          {images.length === 0 ? (
+          {(imageFiles.length === 0 && imageUrls.length === 0) ? (
             <p className="text-gray-500 text-xl ">Add images first</p>
           ) : (
-            images.map((image, index) => (
+            [...imageFiles, ...imageUrls].map((image, index) => (
               <div key={index} className="relative w-40 h-40 bg-gray-50 p-1 rounded-lg mr-5 mb-4">
                 <Image
-                  src={URL.createObjectURL(image)}
+                  src={  isUrl(image) ? image : URL.createObjectURL(image)}
                   alt={`upload-${index}`}
                   width={100} // Set width
                   height={100} // Set height

@@ -4,11 +4,13 @@ import {firebaseApp} from '../lib/db/firebase_config';
 const storage = getStorage(firebaseApp);
 const storageRef = ref(storage);
 
-export async function uploadImages(images){
+export async function uploadImages(productId,images){
+
     const promises = images.map(async (image)=>{
-        const imageRef = ref(storageRef, `${image.productId}/${image.file.name}`);
+        console.log(image.name);
+        const imageRef = ref(storageRef, `${productId}/${image.name}`);
         // const blob = new Blob([image.path], { type: 'image/webp' });
-        await uploadBytes(imageRef, image.file);
+        await uploadBytes(imageRef, image);
         const url = await getDownloadURL(imageRef);
         return url;
     });

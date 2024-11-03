@@ -10,11 +10,13 @@ const ProductSchema = new mongoose.Schema({
     type:[{
       materialType: String,
       materialWeight: String,
-      materialQuality:String,
+      quality:String,
       materialPrice:Number,
-      materialDiscount:{type:Number,default:0},
+      quantity:Number,
+      price:Number,
+      discount:String,
     }],
-    default:{}
+    default:[]
   },
   careInstructions:{
     type:[String],

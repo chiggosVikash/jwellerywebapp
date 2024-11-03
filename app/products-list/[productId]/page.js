@@ -88,7 +88,7 @@ export default function ProductDetailsPage({ params }) {
                             <div>
                                 <h1 className="text-3xl font-bold mb-2 text-gray-800">{product.productName}</h1>
                                 <p className="text-sm text-gray-500 mb-4">SKU: {product.sku}</p>
-                                <p className="text-2xl font-semibold mb-6 text-indigo-600">₹{product.sellingPrice.toLocaleString('en-IN')}</p>
+                                <p className="text-2xl font-semibold mb-6 text-indigo-600">₹{product.sellingPrice ? product.sellingPrice.toLocaleString('en-IN'):"NA"}</p>
                                 <p className="mb-6 text-gray-700 leading-relaxed">{product.description}</p>
                                 
                                 <div className="grid grid-cols-2 gap-4 mb-6">
