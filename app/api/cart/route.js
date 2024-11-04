@@ -1,5 +1,5 @@
 import {NextResponse} from 'next/server'
-import {addToCart,getCartOfUser} from './controller.js'
+import {addToCart,getCartOfUser,removeCartItem} from './controller.js'
 
 export async function POST(req){
     try{
@@ -27,9 +27,11 @@ export async function GET(req){
         if(email === null){
             return Response.json({message:"Email not found"},{status:400})
         }
-        const cart = await getCartOfUser(email)
-        return Response.json({cart},{status:200})
+    
+        const userCart = await getCartOfUser(email)
+        return Response.json({cart: userCart},{status:200})
     }catch(e){
+        console.log(e)
         if(e.message.includes("User not found")){
             return Response.json({message:"User not found"},{status:400})
         }
@@ -49,7 +51,10 @@ export async function DELETE(req){
             return Response.json({message:"Product id not found"},{status:400})
         }
         const cart = await removeCartItem(email,id)
-        return Response.json({cart},{status:200})
+        if(!cart){
+            throw new Error("Cart item not found")
+        }
+        return Response.json({message:"Cart item removed successfully"},{status:200})
     }catch(e){
         if(e.message.includes("User not found")){
             return Response.json({message:"User not found"},{status:400})

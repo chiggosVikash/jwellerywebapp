@@ -6,7 +6,7 @@ export async function POST(req){
 
         const body = await req.json()
         const {filters,reqCount,limit} = body
-        console.log(body);
+        console.log("browse request received",body);
         const products = await browseProducts(reqCount,limit,filters)
         return NextResponse.json({products:products,status:200})
     }catch(e){

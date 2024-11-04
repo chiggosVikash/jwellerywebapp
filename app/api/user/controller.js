@@ -29,3 +29,28 @@ export async function isUserExists(email){
 
     }
 }
+
+export async function getUserByEmail(email){
+    try{
+        await dbConnect()
+        const user = await UserModel.findOne({email:email});
+        return user;
+    
+    }catch(e){
+        throw new Error(e.message);
+    }
+}
+
+export async function updateUser(userData){
+    try{
+        await dbConnect()
+        const user = await UserModel.updateOne({email:userData.email},userData,{upsert:true});
+        if(user.modifiedCount === 0 && user.upsertedCount === 0){
+            throw new Error("User not found");
+        }
+        return true;;
+    }catch(e){
+        throw new Error(e.message);
+    
+    }
+}
