@@ -14,6 +14,7 @@
     "@firebase/app": "^0.10.14",
     "@firebase/auth": "^1.8.0",
     "@hookform/resolvers": "^3.9.0",
+    "@material-tailwind/react": "^2.1.10",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
     "@radix-ui/react-dialog": "^1.1.2",

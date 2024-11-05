@@ -5,6 +5,11 @@ export const useProductStore = create((set)=>({
     isLoading:false,
     error:null,
     selectedImage:null,
+
+    //delete product state
+    isDeleting:false,
+    deleteError:null,
+    isDeleteSuccess:false,
     getProduct:async(productId)=>{
         set({isLoading:true})
         try{
@@ -32,5 +37,26 @@ export const useProductStore = create((set)=>({
         }catch(e){
             set({error:"Error in updating product details",isLoading:false})
         }
+    },
+
+    deleteProduct:async(productId)=>{
+        try{
+            set({isDeleting:true})
+            const response = await axios.delete('/api/products',{params:{productId}})
+            if(response.status === 200){
+                set({isDeleteSuccess:true,isDeleting:false})
+                return productId;
+            }
+
+        }catch(e){
+            set({deleteError:"Product Deletion Failed",isDeleting:false,isDeleteSuccess:false})
+        }
+
+    },
+
+    resetDeleteState:()=>{
+        set({deleteError:null,isDeleting:false,isDeleteSuccess:false})
     }
+
+    
 }))

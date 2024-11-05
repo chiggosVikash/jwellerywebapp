@@ -236,5 +236,15 @@ export async function updateProductById(id,productData){
   }
 }
 
+export async function deleteProduct(id){
+  try{
+    await dbConnect()
+    const product = await ProductModel.findByIdAndDelete(id)
+    return product
+  }catch(e){
+    throw new Error("Error in deleting product")
+  }
+}
+
 
 

@@ -1,8 +1,8 @@
 import ProductModel from "@/app/models/ProductModel";
-import CartModel from "@/app/models/CartModel";
+import WishlistModel from "@/app/models/WishlistModel";
 import { dbConnect } from "@/app/lib/db/dbConnect";
 
-export async function addToCart(data){
+export async function addToWishlist(data){
     await dbConnect();
     const product = await ProductModel.findById(data.productId)
     if(!product){
@@ -10,21 +10,22 @@ export async function addToCart(data){
     }
     const sellingPrice = product.sellingPrice;
     const totalPrice = sellingPrice * data.quantity;
-    const cart = await CartModel.updateOne({user:data.email,product:product._id},{
+    const wishlistRecord = await WishlistModel.updateOne({user:data.email,product:product._id},{
         user:data.email,
         product:product._id,
         quantity:data.quantity,
         price:data.price,
         totalPrice:totalPrice
     },{upsert:true})
-    return cart;
+    return wishlistRecord;
 
     
 }
 
-export async function getCartOfUser(email){
+export async function getWishlistOfUser(email){
+    console.log("Email",email) 
     await dbConnect();
-    const carts = await CartModel.aggregate([
+    const userWishlist = await WishlistModel.aggregate([
         {$match:{user:email}},
         {$lookup:{
             from:"products",
@@ -40,20 +41,21 @@ export async function getCartOfUser(email){
             "product.productImages":1,
             "product.category":1,
             "product.discount":1,
-            "product._id":1,
             "quantity":1,
             "totalPrice":1,
             "user":1,
-            "price":1
+            "price":1,
+            "product._id":1
 
         }}
     ])
-    return carts;
+    // console.log("User Wishlist",userWishlist)
+    return userWishlist;
 }
 
-export async function removeCartItem(email,id){
+export async function removeWishlistItem(email,id){
     await dbConnect();
-    const cart = await CartModel.findOneAndDelete({"user":email,"_id":id})
-    return cart;
+    const wishlistItem = await WishlistModel.findOneAndDelete({"user":email,"_id":id})
+    return wishlistItem;
 
 }

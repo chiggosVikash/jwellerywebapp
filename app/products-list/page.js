@@ -1,61 +1,64 @@
-'use client'
-import axios from 'axios'
-import React, { useEffect, useState, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import { FaIndianRupeeSign } from "react-icons/fa6"
-import { usePageStore } from '../stores/pageStore'
-import useFilterOptionsStore from '../stores/filterOptionsStore'
-import Header from '../components/Header'
-import SearchField from '../components/SearchField'
-import FilterMenu from '../components/FilterMenu'
-import Spinner from '../components/Spinner'
-import Pagination from '../components/Pagination'
-import { authStore } from '../stores/authStore'
-
-
+"use client";
+import axios from "axios";
+import React, { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { FaIndianRupeeSign } from "react-icons/fa6";
+import { usePageStore } from "../stores/pageStore";
+import useFilterOptionsStore from "../stores/filterOptionsStore";
+import Header from "../components/Header";
+import SearchField from "../components/SearchField";
+import FilterMenu from "../components/FilterMenu";
+import Spinner from "../components/Spinner";
+import Pagination from "../components/Pagination";
+import { authStore } from "../stores/authStore";
+import ShowDialog from "../components/ShowDialog";
+import { useProductStore } from "../stores/productStore";
+import { set } from "mongoose";
 
 const ProductsListPage = () => {
-  const router = useRouter()
-  const { page, limit, setPage } = usePageStore()
-  const { filterOptions, selectCategory, selectSubCategory, selectSortOption } = useFilterOptionsStore()
+  const router = useRouter();
+  const { page, limit, setPage } = usePageStore();
+  const { filterOptions, selectCategory, selectSubCategory, selectSortOption } =
+    useFilterOptionsStore();
 
-  const [products, setProducts] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [deleteableProductId,setDeleteableProduct] = useState(null)
+
+  const [dialogHandler, setDialogHandler] = useState(false);
   // const [isSearching, setIsSearching] = useState(false)
+  const { deleteProduct, isDeleting, deleteError, isDeleteSuccess,resetDeleteState } =
+    useProductStore();
 
-  const {cookiesStatus} = authStore()
+  const { cookiesStatus } = authStore();
 
-  useEffect(()=>{
-    const isValid = cookiesStatus()
-    if(!isValid){
-      router.push("/signin")
+  useEffect(() => {
+    const isValid = cookiesStatus();
+    if (!isValid) {
+      router.push("/signin");
     }
-  },[cookiesStatus,router]
-  )
-
-  
-
+  }, [cookiesStatus, router]);
 
   const fetchProducts = useCallback(async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await axios.get('/api/products', {
+      const response = await axios.get("/api/products", {
         params: {
           limit,
           reqCount: page > 0 ? page - 1 : 0,
           category: filterOptions.category,
           subCategory: filterOptions.subCategory,
-          sort: filterOptions.sortOption
-        }
-      })
-      setProducts(response.data.data)
+          sort: filterOptions.sortOption,
+        },
+      });
+      setProducts(response.data.data);
     } catch (error) {
-      setErrorMessage("Error fetching products")
+      setErrorMessage("Error fetching products");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [page, filterOptions, limit])
+  }, [page, filterOptions, limit]);
 
   // const searchProducts = async (query) => {
   //   setIsSearching(true)
@@ -72,29 +75,41 @@ const ProductsListPage = () => {
   // }
 
   useEffect(() => {
-    fetchProducts()
-  }, [fetchProducts])
+    if (isDeleteSuccess) {
+      setDialogHandler(false);
+      resetDeleteState()
+      setProducts(products.filter((product) => product._id !== deleteableProductId));
+      setDeleteableProduct(null)
 
-  if (isLoading ) {
+    }
+  }, [isDeleteSuccess,resetDeleteState,deleteableProductId,products]);
+
+
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  if (isLoading) {
     return (
-      <div className='h-screen w-full flex justify-center items-center'>
+      <div className="h-screen w-full flex justify-center items-center">
         <Spinner loadingMessage={"Loading Products..."} />
       </div>
-    )
+    );
   }
 
   if (errorMessage) {
     return (
-      <div className='h-screen w-full flex justify-center items-center'>
-        <p className='text-red-500 text-xl'>{errorMessage}</p>
+      <div className="h-screen w-full flex justify-center items-center">
+        <p className="text-red-500 text-xl">{errorMessage}</p>
       </div>
-    )
+    );
   }
 
   return (
-    <div className='overflow-x-hidden h-max py-navBarPadding'>
+    <div className="overflow-x-hidden h-max py-navBarPadding">
       <Header header="Products List" />
-      <div className='flex mx-8'>
+      <div className="flex mx-8">
         <FilterMenu
           selectedCategory={filterOptions.category}
           setSelectedCategory={selectCategory}
@@ -103,71 +118,122 @@ const ProductsListPage = () => {
           sortOption={filterOptions.sortOption}
           setSortOption={selectSortOption}
         />
-        <div className='w-full h-screen my-10 ml-10'>
-          <SearchField onClick={() => {
-            router.push('/search')
-          }} />
+        <div className="w-full h-screen my-10 ml-10">
+          <SearchField
+            onClick={() => {
+              router.push("/search");
+            }}
+          />
+
           {products.length === 0 ? (
-            <div className='h-screen w-full flex justify-center items-center'>
-              <p className='text-gray-500 text-xl'>No products found</p>
+            <div className="h-screen w-full flex justify-center items-center">
+              <p className="text-gray-500 text-xl">No products found</p>
             </div>
           ) : (
             <>
+              {/* Show Dilaog Here  */}
+              <ShowDialog
+                title="Delete Product"
+                description={
+                  isDeleteSuccess
+                    ? "Product Deleted Successfully"
+                    : deleteError
+                    ? deleteError
+                    : isDeleting
+                    ? "Deleting Product.."
+                    : "Are you sure you want to delete this product?"
+                }
+                isOpen={dialogHandler}
+              >
+                <button
+                  onClick={() => {
+
+                    deleteProduct(deleteableProductId);
+                  }}
+                  className="btn btn-primary w-14"
+                >
+                  {" "}
+                  Yes{" "}
+                </button>
+                <button
+                  onClick={() => setDialogHandler(false)}
+                  className="btn btn-secondary w-10"
+                >
+                  {" "}
+                  No{" "}
+                </button>
+              </ShowDialog>
               {products.map((product, index) => (
-                <ProductCard key={index} product={product} router={router} />
+                <ProductCard
+                  setDeleteableProduct={setDeleteableProduct}
+                  key={index}
+                  product={product}
+                  router={router}
+                  setDialogHandler={setDialogHandler}
+                />
               ))}
-              {products.length > 0 && (
-                <Pagination onPageChange={setPage} />
-              )}
+              {products.length > 0 && <Pagination onPageChange={setPage} />}
             </>
           )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-const ProductCard = ({ product, router }) => (
-  <div className='flex bg-background my-8 p-4 rounded-lg shadow-sm border-gray-200 py-4'>
+const ProductCard = ({ product, router, setDialogHandler,setDeleteableProduct }) => (
+  <div className="flex bg-background my-8 p-4 rounded-lg shadow-sm border-gray-200 py-4">
     {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img src={product.productImages[0]} alt='product' className='w-32 h-32' />
-    <div className='w-full ml-4'>
-      <p className='text-gray-500 text-xs font-[Inter]'>SKU ID: {product.sku}</p>
-      <div className='mt-1 w-full flex justify-between items-center'>
-        <h1 className='w-[50%] text-xl font-semibold'>{product.productName}</h1>
-        <p className='text-gray-500'>Category: {product.category} | Sub-category: {product.subCategory}</p>
-      </div>
-      <p className='mt-1 text-gray-500'>{product.description}</p>
-      <div className='flex items-center'>
-        <p className='mr-4 line-through text-gray-500 text-xl decoration-solid font-[Inter]'>
-          <FaIndianRupeeSign className='inline text-xs' />{product.costPrice}
+    <img src={product.productImages[0]} alt="product" className="w-32 h-32" />
+    <div className="w-full ml-4">
+      <p className="text-gray-500 text-xs font-[Inter]">
+        SKU ID: {product.sku}
+      </p>
+      <div className="mt-1 w-full flex justify-between items-center">
+        <h1 className="w-[50%] text-xl font-semibold">{product.productName}</h1>
+        <p className="text-gray-500">
+          Category: {product.category} | Sub-category: {product.subCategory}
         </p>
-        <p className='text-primary text-xl font-semibold font-[Inter]'>
-          <FaIndianRupeeSign className='inline text-xs' />{product.sellingPrice}
+      </div>
+      <p className="mt-1 text-gray-500">{product.description}</p>
+      <div className="flex items-center">
+        <p className="mr-4 line-through text-gray-500 text-xl decoration-solid font-[Inter]">
+          <FaIndianRupeeSign className="inline text-xs" />
+          {product.costPrice}
+        </p>
+        <p className="text-primary text-xl font-semibold font-[Inter]">
+          <FaIndianRupeeSign className="inline text-xs" />
+          {product.sellingPrice}
         </p>
       </div>
       <div>
-        <button
+        {/* <button
           onClick={() => router.push(`/products-list/${product.productId}`)}
           className='bg-primary text-onPrimary px-8 py-2 rounded-lg mt-4 mr-4 font-semibold'
         >
           View
+        </button> */}
+        <button
+          onClick={() => {
+            localStorage.setItem("id", product._id);
+            router.push(`/product/edit`);
+          }}
+          className="bg-secondary text-onPrimary font-semibold px-8 py-2 rounded-lg mt-4 mr-4"
+        >
+          View/Edit
         </button>
-        <button 
-        onClick={() => {
-         
-          localStorage.setItem("id",product._id)
-          router.push(`/product/edit`)
-        }}
-        className='bg-secondary text-onPrimary font-semibold px-8 py-2 rounded-lg mt-4 mr-4'>
-          Edit
-        </button>
-        <button className='bg-red-100 text-red-900 font-semibold px-8 py-2 rounded-lg mt-4'>
+        <button
+          onClick={() => {
+            setDeleteableProduct(product._id);
+            setDialogHandler(true);
+          }}
+          className="bg-red-100 text-red-900 font-semibold px-8 py-2 rounded-lg mt-4"
+        >
           Delete
         </button>
       </div>
     </div>
   </div>
-)
+);
 
-export default ProductsListPage
+export default ProductsListPage;

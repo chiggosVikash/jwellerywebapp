@@ -1,7 +1,7 @@
 // This is the route file for the products API
 // It contains the route handlers for the products API
 
-import { createProduct, getProducts, searchProducts } from './controller.js'
+import { createProduct, getProducts, searchProducts,deleteProduct } from './controller.js'
 import { NextResponse } from 'next/server';
 
 
@@ -50,6 +50,27 @@ export async function POST(req) {
   } catch (error) {
     console.error("Error in POST request:", error);
     return NextResponse.error(`Failed ${error}`, { status: 500 })
+  }
+}
+
+export async function DELETE(req){
+  try{
+    console.log("DELETE request")
+    const url = new URL(req.url);
+    const productId = url.searchParams.get("productId");
+    console.log("productId",productId)
+    if(!productId){
+      throw new Error("Product Id is required")
+    }
+    const product = await deleteProduct(productId)
+    if(!product){
+      throw new Error("Failed to delete product")
+    }
+    return NextResponse.json({message:"Product Deleted"},{status:200})
+
+  }catch(e){
+    console.error("Error in DELETE request:", e);
+    return NextResponse.error(`Failed ${e.message}`, { status: 500 })
   }
 }
 
