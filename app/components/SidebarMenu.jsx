@@ -7,7 +7,7 @@ import { menuItems } from '../menu-items';
 const SidebarMenu = () => {
   const [selectedMenu , setSelectedMenu] = useState('Dashboard');
   return (
-    <div className='fixed left-0 z-50 w-[18%] h-screen flex flex-col items-center bg-slate-100 shadow-sm pl-2 py-8 text-onPrimary'>
+    <div className='fixed left-0 z-50 w-[18%] h-screen flex flex-col items-center bg-muted shadow-sm pl-2 py-8 text-muted-foreground'>
       <img src={Logo.src} alt="Logo Image" className='w-32 h-34 object-cover' />
       <ul className='w-full'>{
         menuItems.map((item, index) => {
